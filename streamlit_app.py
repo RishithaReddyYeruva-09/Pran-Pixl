@@ -1,12 +1,12 @@
 import streamlit as st
 
-# Configure the page to be wide by default
-st.set_page_config(layout="wide")
+# Step 1: Force the page to wide mode to support the 1/3 - 2/3 split
+st.set_page_config(layout="wide", page_title="Vintage App")
 
-# This is the single-file monolithic structure
-app_code = """
+# Step 2: Define the interface in a single Python string
+interface_html = """
 <style>
-    /* 1. VINTAGE COFFEE THEME VARIABLES */
+    /* THEME VARIABLES */
     :root {
         --espresso: #3d2b1f;
         --mocha: #6f4e37;
@@ -16,16 +16,13 @@ app_code = """
         --border: #a67c52;
     }
 
-    /* 2. LAYOUT RESET */
-    /* We hide Streamlit's default padding to take over the screen */
-    .stApp {
-        padding: 0;
-    }
-    
-    header {visibility: hidden;}
-    footer {visibility: hidden;}
+    /* CLEAN SLATE: Hide Streamlit's default margins and UI */
+    .stApp { padding: 0; }
+    header { visibility: hidden; }
+    footer { visibility: hidden; }
+    #root > div:nth-child(1) > div > div > div > div > section > div { padding: 0; }
 
-    .main-container {
+    .app-wrapper {
         display: flex;
         height: 100vh;
         width: 100vw;
@@ -35,7 +32,7 @@ app_code = """
         font-family: 'Georgia', serif;
     }
 
-    /* 3. SIDEBAR (1/3 Width) */
+    /* LEFT PART: 1/3 WIDTH */
     .sidebar {
         flex: 1; 
         background-color: var(--espresso);
@@ -43,64 +40,58 @@ app_code = """
         border-right: 5px double var(--border);
         padding: 40px 30px;
         overflow-y: auto;
-        box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+        box-shadow: 5px 0 15px rgba(0,0,0,0.2);
     }
 
-    /* 4. MAIN SECTION (2/3 Width) */
+    /* RIGHT PART: 2/3 WIDTH */
     .main-section {
-        flex: 2;
+        flex: 2; 
         background-color: var(--paper);
+        color: var(--espresso);
         padding: 60px;
         overflow-y: auto;
-        color: var(--espresso);
-        /* Subtle parchment texture */
         background-image: radial-gradient(var(--paper) 70%, #e3d5c5 100%);
     }
 
-    /* TYPOGRAPHY */
     h1, h2 {
         text-transform: uppercase;
         letter-spacing: 2px;
-        border-bottom: 2px solid var(--mocha);
-        padding-bottom: 10px;
     }
 
-    .sidebar h2 {
+    h2 {
+        border-bottom: 2px solid var(--latte);
+        padding-bottom: 10px;
         color: var(--latte);
-        border-bottom-color: var(--latte);
+        font-size: 1.5rem;
+    }
+
+    h1 {
+        border-bottom: 2px solid var(--mocha);
+        padding-bottom: 15px;
+        margin-top: 0;
     }
 
     p {
         line-height: 1.8;
         font-style: italic;
-    }
-
-    /* CUSTOM SCROLLBAR for that vintage look */
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-        background: var(--paper);
-    }
-    ::-webkit-scrollbar-thumb {
-        background: var(--mocha);
+        font-size: 1.1rem;
     }
 </style>
 
-<div class="main-container">
+<div class="app-wrapper">
     <div class="sidebar">
         <h2>The Blend</h2>
         <p>This is your control panel.</p>
-        <p>Use this area for navigation, filters, or settings.</p>
+        <p>Everything here is contained within the first third of your screen.</p>
     </div>
 
     <div class="main-section">
         <h1>Vintage Workspace</h1>
-        <p>This is your main canvas. Everything here is styled with the coffee-brown palette and a 2/3 ratio layout.</p>
-        <p>The code is fully contained in one file and ready for your next instruction.</p>
+        <p>Welcome to the main gallery. The layout is now correctly partitioned, and the "SyntaxError" is resolved.</p>
+        <p>We are using a single-file monolithic structure as requested.</p>
     </div>
 </div>
 """
 
-# Render the entire app
-st.markdown(app_code, unsafe_allow_html=True)
+# Step 3: Execute the HTML/CSS
+st.markdown(interface_html, unsafe_allow_html=True)
