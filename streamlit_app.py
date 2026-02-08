@@ -98,7 +98,7 @@ st.markdown("""
 # 5. Layer 5: Centralized Overlay Workspace
 st.markdown('<div class="central-workspace">', unsafe_allow_html=True)
 
-st.markdown("<h2 style='text-align: center; color: #3E2723; font-family: sans-serif; margin-bottom: 20px; text-shadow: 1px 1px 2px white;'>drang drop the image for scanning</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center; color: #3E2723; font-family: sans-serif; margin-bottom: 20px; text-shadow: 1px 1px 2px white;'>drag drop the image for scanning</h2>", unsafe_allow_html=True)
 
 # Centered Uploader
 _, uploader_col, _ = st.columns([1, 3, 1])
