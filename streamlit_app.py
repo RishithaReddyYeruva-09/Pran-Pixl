@@ -1,7 +1,6 @@
 import streamlit as st
 import time
 import random
-import os
 
 # 1. Page Configuration
 st.set_page_config(page_title="PranPixl | Smart Shopping", layout="wide")
@@ -72,44 +71,23 @@ st.markdown(f"""
     
     .result-card {{
         background-color: {box_bg}; border: 2px solid {border_color};
-        border-radius: 20px; padding: 18px; text-align: left;
-        min-height: 220px; backdrop-filter: blur(8px);
-        transition: transform 0.3s ease; margin-bottom: 12px;
+        border-radius: 30px; padding: 25px; text-align: center;
+        min-height: 420px; backdrop-filter: blur(8px);
+        transition: transform 0.3s ease;
     }}
-    .price-tag {{ font-size: 1.6rem; font-weight: 800; color: {text_color}; margin: 10px 0; }}
-    .best-badge {{
-        background-color: #4CAF50; color: white; padding: 5px 12px;
-        border-radius: 20px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-bottom: 10px;
+    .price-tag {{ font-size: 2rem; font-weight: 800; color: {text_color}; margin: 10px 0; }}
+    .best-badge {{ 
+        background-color: #4CAF50; color: white; padding: 5px 15px; 
+        border-radius: 20px; font-size: 0.8rem; font-weight: bold; display: inline-block; margin-bottom: 10px;
     }}
-    .rating-tag {{ color: #FFA000; font-weight: bold; font-size: 1.05rem; }}
-    .app-header-row {{ display:flex; align-items:center; gap:12px; }}
-    .app-logo {{ width:48px; height:48px; object-fit:contain; border-radius:8px; }}
+    .rating-tag {{ color: #FFA000; font-weight: bold; font-size: 1.1rem; }}
     </style>
     """, unsafe_allow_html=True)
 
-# 5. Header Section (with logo on the left)
+# 5. Header Section
 h_col1, h_col2 = st.columns([2, 1.2])
-
 with h_col1:
-    # split into logo + title
-    logo_col, title_col = st.columns([0.12, 0.88])
-    with logo_col:
-        # Option A: use a local file named 'logo.png' placed in the app folder
-        if os.path.exists("logo.png"):
-            st.image("logo.png", width=64)
-        else:
-            # Fallback: small styled box or emoji if no file is present
-            st.markdown(
-                f"""<div style="width:64px;height:64px;border-radius:12px;
-                           background:{accent_color};display:flex;align-items:center;
-                           justify-content:center;color:{text_color};font-weight:800;">
-                           🅿
-                       </div>""",
-                unsafe_allow_html=True,
-            )
-
-    with title_col:
-        st.markdown(f'<h1 style="color:{text_color}; padding-left: 10px; margin: 0;">PranPixl</h1>', unsafe_allow_html=True)
+    st.markdown(f'<h1 style="color:{text_color}; padding-left: 20px;">PranPixl</h1>', unsafe_allow_html=True)
 
 with h_col2:
     lang = st.selectbox("Language", list(translations.keys()), label_visibility="collapsed")
@@ -139,17 +117,17 @@ else:
     with r_col1:
         st.image(uploaded_file, width=250)
     with r_col2:
-        st.markdown(f"<h2 style='color: {text_color}; margin-bottom:6px;'>{item_name}</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h2 style='color: {text_color};'>{item_name}</h2>", unsafe_allow_html=True)
         st.info(f"Scan Status: {ui['ready']}")
 
     st.divider()
 
-    # App Cards Section (with logos)
+    # App Cards Section
     apps = [
-        {"name": "Amazon", "desc": "Global marketplace.", "logo": "amazon.png", "emoji": "🛒"},
-        {"name": "Flipkart", "desc": "India's favorites.", "logo": "flipkart.png", "emoji": "📦"},
-        {"name": "Myntra", "desc": "Premium lifestyle.", "logo": "myntra.png", "emoji": "👟"},
-        {"name": "Ajio", "desc": "Artisanal fashion.", "logo": "ajio.png", "emoji": "🧵"}
+        {"name": "Amazon", "desc": "Global marketplace."},
+        {"name": "Flipkart", "desc": "India's favorites."},
+        {"name": "Myntra", "desc": "Premium lifestyle."},
+        {"name": "Ajio", "desc": "Artisanal fashion."}
     ]
 
     cols = st.columns(len(apps))
@@ -157,52 +135,26 @@ else:
     for i, app in enumerate(apps):
         name = app['name']
         details = market_data[name]
-        logo_path = app.get("logo", "")
-        emoji_fallback = app.get("emoji", "🏷️")
-
-        # Prepare logo HTML: use local file if exists, otherwise emoji box
-        if logo_path and os.path.exists(logo_path):
-            logo_html = f'<img src="{logo_path}" class="app-logo" alt="{name} logo">'
-        else:
-            # simple colored box with emoji fallback
-            logo_html = f'''
-                <div style="width:48px;height:48px;border-radius:8px;background:{accent_color};
-                            display:flex;align-items:center;justify-content:center;color:{text_color};font-weight:700;">
-                    {emoji_fallback}
-                </div>
-            '''
-
+        
         with cols[i]:
             # Show "Best Deal" badge if it's the lowest price
-            badge_html = f'<div class="best-badge">{ui["best_deal"]}</div>' if name == cheapest_platform else '<div style="height:28px;"></div>'
+            badge_html = f'<div class="best-badge">{ui["best_deal"]}</div>' if name == cheapest_platform else '<div style="height:32px;"></div>'
             
-            # Card HTML: logo on left, title + price on right
-            card_html = f"""
+            st.markdown(f"""
                 <div class="result-card">
                     {badge_html}
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        {logo_html}
-                        <div style="flex:1;">
-                            <div style="display:flex; align-items:center; justify-content:space-between;">
-                                <h3 style="color: {text_color}; margin:0;">{name}</h3>
-                                <div style="text-align:right;">
-                                    <div class="price-tag" style="margin:0;">{details['price']}</div>
-                                </div>
-                            </div>
-                            <div style="margin-top:6px;">
-                                <span class="rating-tag">⭐ {details['rating']}</span>
-                                <span style="color:{text_color}; opacity:0.7; margin-left:8px;">{details['reviews']} Reviews</span>
-                            </div>
-                            <hr style="border: 0.5px solid {border_color}; opacity: 0.3; margin-top:10px;">
-                            <p style="color: {text_color}; opacity: 0.85; font-size: 0.9rem; margin:6px 0 0 0;">
-                                • {details['delivery']} Delivery &nbsp; • Easy Returns &nbsp; • Secure Payment
-                            </p>
-                        </div>
-                    </div>
+                    <h2 style="color: {text_color}; margin-top:0;">{name}</h2>
+                    <div class="price-tag">{details['price']}</div>
+                    <div class="rating-tag">⭐ {details['rating']}</div>
+                    <p style="color: {text_color}; opacity: 0.7; font-size: 0.8rem;">{details['reviews']} Reviews</p>
+                    <hr style="border: 0.5px solid {border_color}; opacity: 0.3;">
+                    <p style="color: {text_color}; text-align: left; font-size: 0.9rem;">
+                        • {details['delivery']} Delivery<br>
+                        • Easy Returns Available<br>
+                        • Secure Payment
+                    </p>
                 </div>
-            """
-
-            st.markdown(card_html, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
             
             if st.button(f"{ui['buy']} @ {name}", key=f"btn_{name}", use_container_width=True):
                 st.success(f"Redirecting to {name}...")
