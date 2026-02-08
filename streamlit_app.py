@@ -3,104 +3,94 @@ import streamlit as st
 # 1. Page Configuration
 st.set_page_config(page_title="PranPixl", layout="wide")
 
-# 2. Coffee Brown & Watermark CSS
+# 2. Coffee Brown & Fixed Watermark CSS
 st.markdown("""
     <style>
-    /* Main Background - Classic Coffee Cream */
+    /* Main Background - Latte Cream */
     .stApp {
         background-color: #D7CCC8; 
     }
 
-    /* WATERMARK EFFECT */
+    /* THE WATERMARK - Adjusted to a clearer Brown */
     .watermark {
         position: fixed;
-        top: 55%;
+        top: 60%;
         left: 60%;
         transform: translate(-50%, -50%);
-        font-size: 12vw; /* Responsive large text */
+        font-size: 10vw; 
         font-weight: 900;
         font-style: italic;
-        color: rgba(60, 42, 33, 0.1); /* Very faint espresso brown */
-        z-index: -1; /* Pushes it behind all other elements */
+        /* Using a solid Coffee Brown with slight opacity */
+        color: rgba(60, 42, 33, 0.4); 
+        z-index: -1; 
         user-select: none;
         pointer-events: none;
         white-space: nowrap;
-        font-family: 'Arial Black', sans-serif;
+        font-family: 'Arial Black', Gadget, sans-serif;
+        text-transform: uppercase;
     }
 
-    /* REMOVE PADDING */
-    .block-container {
-        padding: 0rem;
-        max-width: 100%;
+    /* Force the first column to look like a permanent sidebar */
+    [data-testid="column"]:nth-child(1) {
+        border-right: 4px solid #3C2A21 !important;
+        min-height: 100vh;
+        padding-right: 25px !important;
     }
 
-    /* HEADER AREA */
-    .header-wrapper {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 40px;
-        border-bottom: 3px solid #3C2A21;
-        background-color: #D7CCC8;
-    }
-
-    /* LOGO BOX */
+    /* Header styling to match the drawing */
     .logo-box {
         border: 3px solid #000;
-        padding: 15px 30px;
+        padding: 10px 20px;
         background: white;
         font-weight: bold;
-        text-align: center;
+        display: inline-block;
+        color: #000;
     }
 
-    /* PERMANENT SIDEBAR COLUMN (STILL NO TOGGLE) */
-    [data-testid="column"]:nth-child(1) {
-        border-right: 3px solid #3C2A21;
-        min-height: 90vh;
-        padding: 40px !important;
-        background-color: rgba(60, 42, 33, 0.05); /* Slight tint for sidebar */
+    .header-divider {
+        border-bottom: 4px solid #3C2A21;
+        width: 100%;
+        margin-bottom: 20px;
     }
 
-    /* LANGUAGE SELECTOR OVAL */
-    .stSelectbox div[data-baseweb="select"] {
-        border-radius: 30px !important;
-        border: 2px solid #3C2A21 !important;
+    /* Styling for the File Uploader area */
+    .stFileUploader {
+        border: 2px dashed #3C2A21;
+        border-radius: 10px;
+        background-color: rgba(60, 42, 33, 0.05);
     }
     </style>
     """, unsafe_allow_html=True)
 
-# 3. Watermark (Placed first so it stays in the background)
+# 3. The Watermark
 st.markdown('<div class="watermark">PRANPIXL</div>', unsafe_allow_html=True)
 
-# 4. Top Header
-h_left, h_mid, h_right = st.columns([1, 3, 1])
-with h_left:
-    st.markdown('<div style="padding-left: 20px;"><div class="logo-box">logo</div><div style="font-weight:bold; color:#3C2A21; margin-top:5px;">PranPixl</div></div>', unsafe_allow_html=True)
+# 4. Header (Logo on Left, Language on Right)
+h1, h2, h3 = st.columns([1, 4, 1])
+with h1:
+    st.markdown('<div class="logo-box">logo</div>', unsafe_allow_html=True)
+    st.markdown("<p style='font-weight:bold; color:#3C2A21; margin-top:5px;'>PranPixl</p>", unsafe_allow_html=True)
 
-with h_right:
-    st.markdown('<div style="padding-right: 20px; padding-top:10px;">', unsafe_allow_html=True)
+with h3:
+    # Language selector (styled oval)
     st.selectbox("lang", ["English", "Arabic", "French"], label_visibility="collapsed")
-    st.markdown('</div>', unsafe_allow_html=True)
 
-# Horizontal line divider
-st.markdown("<div style='border-bottom: 3px solid #3C2A21; width: 100%;'></div>", unsafe_allow_html=True)
+st.markdown('<div class="header-divider"></div>', unsafe_allow_html=True)
 
-# 5. Fixed Main Layout
-# col_sidebar is the left panel, col_main is the workspace
-col_sidebar, col_main = st.columns([1, 3])
+# 5. Fixed Grid (Left Sidebar + Main Area)
+col_left, col_right = st.columns([1, 3.5])
 
-with col_sidebar:
+with col_left:
     st.markdown("<br><br>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #3C2A21;'>drag drop the product image for scanning</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #3C2A21; font-weight: bold;'>drang drop the image for scanning</p>", unsafe_allow_html=True)
     
-    # The Uploader
+    # Drag and Drop interaction
     uploaded_file = st.file_uploader("", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
     
     if uploaded_file:
         st.image(uploaded_file, use_container_width=True)
-        st.success("Loaded")
+        st.success("Ready for Scan")
 
-with col_main:
-    # This column is empty but holds the space over the watermark.
-    # You can add results or buttons here later.
+with col_right:
+    # This remains empty so the watermark is fully visible
     pass
