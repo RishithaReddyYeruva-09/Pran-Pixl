@@ -1,8 +1,97 @@
 import streamlit as st
 
-# 1. Page Configuration
-st.set_page_config(layout="wide", page_title="PRANPIXL Vintage")
+# Step 1: Force the page to wide mode to support the 1/3 - 2/3 split
+st.set_page_config(layout="wide", page_title="Vintage App")
 
-# 2. Embedded Logo (Base64) - This replaces the physical file to prevent errors
-# This string represents the PRANPIXL logo you uploaded.
-LOGO_DATA = "iVBORw0KGgoAAAANSUhEUgAAAlgAAAH0CAYAAACm3uC+AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAChvSURBVHgB7d0LjB3Xfef5c+/MvXyRokiRlCjSoinL8iN2bCdOfMSRu866idMmsYFst0XQpG3SbtA02KZZFGkQpGkaNEV6o0j7IkXQpEka7G66Tdp0XNfOnLidOH7EsS3HkiXbliXREiXyvXyR7Mxdzv83M9S9pCiK5N6Z4fD7AYvDmfuY4f2vR7+v76mqqgIAAAAAAAAAAAAAAAAAsH68dDcAAPCHlW/Vz5/fNlEulS7vX9G/7mR7pL+v09XfXSmVvI6OajlcLpW9SlWq0WjW60196vVms15vNBpN/atWqVTr9Ubt1Om2+vEnJ6p3Xv36mR/f6G9LAAAgYpUBAMAaVf9uPdI5VunqW9fTP7itP791vW66p7uvsrGzq7qr1NG7v79S3N/X27Ghp6e7UiiUvEJRKhSqVatVavVao9moN+rNenNoYLDZ3L8vXzt9fO3S2XPH9p/+0m8f+f6f/PAnv/yXv/i0Xqs09PjS3+vV5Uaj0dAfS3V8rR956vUnV5b7BvW1/WpL68sAABAYAQDAWlP9bn1HZaCjt3d3X9/mO6q77u6fmLu7v6v73v6Ozu29/T39fX29Xf39fd5Af6U8VvEKpaJXKpUKpYpX8CqloleSqid9q7Vao9GsV988s6pP/fT68/ovp4795uSxPz919Nc/69b/v6VvV6lVvEpFf67Xm5W6PkV/q9f0z/VmvVmVaqlatXrj3OnW0OnvVv7Wv1p966e3HvnWv/y7Wv179WazXqtW9X/Wf1zXG3X9X9Nf6zX9uVlvVqXWqtZqzVq1WT39fOfC97+56+S//d9PPf6X/9+zXf1mEAAAxIsAAOB6q/5Nfa78UGeht7evv693657Khtuu5Efu9AbGbtY7+F3d3d09Y+MVr1QqF8uVUqFUKXlK3Xpff7VS9PTe7H/V36q/7f/Un7/zf/RP/U7/XP8p/X/9qX/V3+ov9Nf688tPvfr80tNPvPTU0R9959S3L9Tff0n/Xf+d/v+0Xf0S8V/O6O//1v4P6u+tP6rVao368vLy8vLS8t9/56+qR44e/d7pU785uXL019e/f7S79X8VAgCAeBEAAKylR3q8zX29u/tGduy+snvLPX079+7v797RPzlzdO7I9zYfOX68fGL6mDdy/M987Y9/eOTo6R+dOf3D/t6+fX9r//zYvUf6/ub+C6985SffPzM/f73+rF7T3/Vnvf6
+# Step 2: Define the interface in a single Python string
+interface_html = """
+<style>
+    /* THEME VARIABLES */
+    :root {
+        --espresso: #3d2b1f;
+        --mocha: #6f4e37;
+        --latte: #c0a080;
+        --cream: #f5f5dc;
+        --paper: #ece0d1;
+        --border: #a67c52;
+    }
+
+    /* CLEAN SLATE: Hide Streamlit's default margins and UI */
+    .stApp { padding: 0; }
+    header { visibility: hidden; }
+    footer { visibility: hidden; }
+    #root > div:nth-child(1) > div > div > div > div > section > div { padding: 0; }
+
+    .app-wrapper {
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+        position: fixed;
+        top: 0;
+        left: 0;
+        font-family: 'Georgia', serif;
+    }
+
+    /* LEFT PART: 1/3 WIDTH */
+    .sidebar {
+        flex: 1; 
+        background-color: var(--espresso);
+        color: var(--cream);
+        border-right: 5px double var(--border);
+        padding: 40px 30px;
+        overflow-y: auto;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+    }
+
+    /* RIGHT PART: 2/3 WIDTH */
+    .main-section {
+        flex: 2; 
+        background-color: var(--paper);
+        color: var(--espresso);
+        padding: 60px;
+        overflow-y: auto;
+        background-image: radial-gradient(var(--paper) 70%, #e3d5c5 100%);
+    }
+
+    h1, h2 {
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    h2 {
+        border-bottom: 2px solid var(--latte);
+        padding-bottom: 10px;
+        color: var(--latte);
+        font-size: 1.5rem;
+    }
+
+    h1 {
+        border-bottom: 2px solid var(--mocha);
+        padding-bottom: 15px;
+        margin-top: 0;
+    }
+
+    p {
+        line-height: 1.8;
+        font-style: italic;
+        font-size: 1.1rem;
+    }
+</style>
+
+<div class="app-wrapper">
+    <div class="sidebar">
+        <h2>The Blend</h2>
+        <p>This is your control panel.</p>
+        <p>Everything here is contained within the first third of your screen.</p>
+    </div>
+
+    <div class="main-section">
+        <h1>Vintage Workspace</h1>
+        <p>Welcome to the main gallery. The layout is now correctly partitioned, and the "SyntaxError" is resolved.</p>
+        <p>We are using a single-file monolithic structure as requested.</p>
+    </div>
+</div>
+"""
+
+# Step 3: Execute the HTML/CSS
+st.markdown(interface_html, unsafe_allow_html=True)
