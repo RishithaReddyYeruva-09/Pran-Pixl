@@ -1,84 +1,100 @@
 import streamlit as st
 
 # 1. Page Configuration
-st.set_page_config(page_title="PranPixl", layout="wide")
+st.set_page_config(page_title="PranPixl", layout="wide", initial_sidebar_state="expanded")
 
-# 2. Coffee Brown Theme CSS
+# 2. Coffee Brown Style & No-Toggle Sidebar CSS
 st.markdown("""
     <style>
-    /* Main Background and Text */
-    .stApp {
-        background-color: #F5F5DC; /* Cream/Beige background */
+    /* 1. Force Sidebar to stay open and hide the toggle button */
+    [data-testid="sidebar-button"] {
+        display: none !important;
     }
-    
-    /* Sidebar styling */
     section[data-testid="stSidebar"] {
-        background-color: #3C2A21; /* Dark Espresso */
-        border-right: 2px solid #6F4E37;
+        width: 350px !important;
+        background-color: #3C2A21; /* Deep Espresso */
+        border-right: 3px solid #2A1B15;
     }
     
-    /* Change sidebar text to light cream */
-    section[data-testid="stSidebar"] .stText, 
-    section[data-testid="stSidebar"] label,
-    section[data-testid="stSidebar"] h2 {
-        color: #F5F5DC !important;
+    /* 2. Main Page Background */
+    .stApp {
+        background-color: #EDE0D4; /* Light Latte / Cream */
     }
-
-    /* Main Title Styling */
+    
+    /* 3. Header Styling */
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        border-bottom: 3px solid #3C2A21;
+        background-color: #EDE0D4;
+    }
+    
+    /* 4. Main Title (PRANPIXL) */
     .main-title {
-        font-size: 100px !important;
-        font-weight: 800;
+        font-size: 110px !important;
+        font-weight: 900;
         font-style: italic;
         text-align: center;
-        margin-top: 120px;
-        color: #3C2A21; /* Espresso Brown */
-        letter-spacing: 5px;
-        text-shadow: 2px 2px #D2B48C;
+        color: #3C2A21;
+        margin-top: 15vh;
+        letter-spacing: -2px;
     }
     
-    /* Header styling */
-    .header-line {
-        border-bottom: 3px solid #3C2A21;
-        margin-bottom: 20px;
+    /* 5. Custom Sidebar Text */
+    .sidebar-text {
+        color: #EDE0D4 !important;
+        text-align: center;
+        font-family: 'Courier New', Courier, monospace;
     }
 
-    /* File Uploader Box Customization */
-    section[data-testid="stFileUploader"] {
+    /* File Uploader styling */
+    .stFileUploader {
+        padding: 20px;
         background-color: #4E3629;
-        border-radius: 10px;
-        padding: 10px;
+        border-radius: 15px;
+        border: 1px dashed #EDE0D4;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# 3. Header Section
-col_logo, col_empty, col_lang = st.columns([1, 4, 1])
+# 3. Top Header Section
+# Creating a custom header to match the sketch precisely
+header_col1, header_col2, header_col3 = st.columns([1, 4, 1])
 
-with col_logo:
-    # Small logo placeholder
-    st.markdown("<div style='border: 2px solid #3C2A21; padding: 5px; text-align: center; font-weight: bold;'>LOGO</div>", unsafe_allow_html=True)
-    st.markdown("<p style='color: #3C2A21; font-weight: bold; margin-top: 5px;'>PranPixl</p>", unsafe_allow_html=True)
+with header_col1:
+    # Logo Box
+    st.markdown("""
+        <div style="border: 3px solid #3C2A21; padding: 10px; text-align: center; width: 120px; background: white;">
+            <b style="color: black;">logo</b>
+        </div>
+        <div style="color: #3C2A21; font-weight: bold; padding-top: 5px;">PranPixl</div>
+    """, unsafe_allow_html=True)
 
-with col_lang:
-    st.selectbox("Language", ["English", "Spanish", "French"], label_visibility="collapsed")
+with header_col3:
+    # Language Oval (using a styled selectbox)
+    st.markdown('<div style="text-align: right;">', unsafe_allow_html=True)
+    st.selectbox("language", ["English", "Arabic", "French"], label_visibility="collapsed")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown('<div class="header-line"></div>', unsafe_allow_html=True)
+# Divider line
+st.markdown("<hr style='border: 1.5px solid #3C2A21; margin-top: 0;'>", unsafe_allow_html=True)
 
-# 4. Sidebar (Upload Area)
+# 4. Sidebar Content (Fixed and Non-Togglable)
 with st.sidebar:
-    st.markdown("<h2 style='text-align: center;'>UPLOAD</h2>", unsafe_allow_html=True)
-    uploaded_file = st.file_uploader(
-        "drang drop the image for scanning", 
-        type=["png", "jpg", "jpeg"]
-    )
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown("<div class='sidebar-text'>drang drop the image for scanning</div>", unsafe_allow_html=True)
+    
+    uploaded_file = st.file_uploader("", type=["png", "jpg", "jpeg"])
     
     if uploaded_file:
-        st.image(uploaded_file, caption="Selected Image", use_container_width=True)
+        st.markdown("---")
+        st.image(uploaded_file, caption="Image Loaded", use_container_width=True)
 
-# 5. Main Body
+# 5. Main Content Area
 st.markdown('<h1 class="main-title">PRANPIXL</h1>', unsafe_allow_html=True)
 
-# 6. Bottom scan feedback
-if uploaded_file:
-    st.markdown("<p style='text-align: center; color: #6F4E37;'><i>Ready to scan the pixels...</i></p>", unsafe_allow_html=True)
-    
+# Optional footer or status
+if not uploaded_file:
+    st.markdown("<p style='text-align: center; color: #8B5E3C;'>Waiting for image input...</p>", unsafe_allow_html=True)
