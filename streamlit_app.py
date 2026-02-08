@@ -8,7 +8,7 @@ st.set_page_config(page_title="PranPixl | Smart Shopping", layout="wide")
 if 'theme' not in st.session_state:
     st.session_state.theme = 'light'
 
-# 2. Indian Languages Translation Dictionary
+# 2. Comprehensive Indian Language Dictionary
 translations = {
     "English": {
         "instruction": "Drag & drop the image for scanning",
@@ -51,7 +51,7 @@ translations = {
         "scan_status": "ஸ்கேன் நிலை"
     },
     "తెలుగు (Telugu)": {
-        "instruction": "స్కానింగ్ కోసం చిత్రా妞ని ఇక్కడ ఉంచండి",
+        "instruction": "స్కానింగ్ కోసం చిత్రాన్ని ఇక్కడ ఉంచండి",
         "ready": "చిత్రం అందింది",
         "toggle_light": "☕ డార్క్ రోస్ట్",
         "toggle_dark": "🥛 లైట్ లాట్టే",
@@ -102,23 +102,33 @@ translations = {
     }
 }
 
-# 3. MOCK API LOGIC
+# 3. MOCK API LOGIC (Simulates Data Fetching)
 def get_live_market_data(item_name):
     platforms = ["Amazon", "Flipkart", "Myntra", "Ajio"]
     data = {}
     base_price = random.randint(1500, 5000)
+    
+    # Platform-specific "simulated" descriptions
+    descriptions = {
+        "Amazon": f"Bestselling {item_name} with high-grade finish. Reliable performance and top-tier seller rating.",
+        "Flipkart": f"Exclusive {item_name} deal. Features advanced comfort technology and stylish design elements.",
+        "Myntra": f"Premium fashion-forward {item_name}. Handpicked quality materials for a luxury feel.",
+        "Ajio": f"Artisanal {item_name} with a focus on trendy aesthetics and traditional craftsmanship."
+    }
+
     for p in platforms:
-        price = base_price + random.randint(-200, 500)
+        price = base_price + random.randint(-250, 400)
         data[p] = {
             "price": f"₹{price:,}",
             "numeric_price": price,
-            "rating": round(random.uniform(3.8, 4.9), 1),
-            "reviews": f"{random.randint(500, 5000)}+",
-            "delivery": f"{random.randint(1, 4)} Days"
+            "rating": round(random.uniform(4.0, 4.9), 1),
+            "reviews": f"{random.randint(800, 12000)}+",
+            "delivery": f"{random.randint(1, 4)} Days",
+            "desc": descriptions[p]
         }
     return data
 
-# 4. Theme & Styling (Keeping your custom aesthetic)
+# 4. Theme & Custom CSS
 if st.session_state.theme == 'light':
     bg_color, text_color, box_bg, border_color = "#D7CCC8", "#3E2723", "rgba(255, 255, 255, 0.5)", "#3E2723"
     watermark_opacity = "0.15"
@@ -131,15 +141,22 @@ st.markdown(f"""
     [data-testid="stAppViewContainer"] {{ background-color: {bg_color} !important; }}
     .watermark-container {{ position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; }}
     .watermark-text {{ font-size: 14vw; font-weight: 900; color: {text_color}; opacity: {watermark_opacity}; font-family: sans-serif; }}
+    
     .result-card {{
         background-color: {box_bg}; border: 2px solid {border_color};
-        border-radius: 30px; padding: 25px; text-align: center;
-        min-height: 440px; backdrop-filter: blur(8px);
+        border-radius: 35px; padding: 25px; text-align: center;
+        min-height: 520px; backdrop-filter: blur(8px);
+        display: flex; flex-direction: column; justify-content: space-between;
     }}
-    .price-tag {{ font-size: 2.2rem; font-weight: 800; color: {text_color}; margin: 10px 0; }}
+    .price-tag {{ font-size: 2.1rem; font-weight: 800; color: {text_color}; margin: 5px 0; }}
     .best-badge {{ 
-        background-color: #2E7D32; color: white; padding: 6px 18px; 
-        border-radius: 20px; font-size: 0.85rem; font-weight: bold; display: inline-block; margin-bottom: 15px;
+        background-color: #1B5E20; color: white; padding: 6px 15px; 
+        border-radius: 20px; font-size: 0.8rem; font-weight: bold; display: inline-block; margin-bottom: 10px;
+    }}
+    .product-desc {{
+        font-size: 0.85rem; color: {text_color}; opacity: 0.8;
+        text-align: left; margin: 15px 0; line-height: 1.4;
+        min-height: 65px; border-left: 3px solid {border_color}; padding-left: 10px;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -147,11 +164,10 @@ st.markdown(f"""
 # 5. Header Section
 h_col1, h_col2 = st.columns([2, 1.2])
 with h_col1:
-    st.markdown(f'<h1 style="color:{text_color}; padding-left: 20px;">PranPixl</h1>', unsafe_allow_html=True)
+    st.markdown(f'<h1 style="color:{text_color}; padding-left: 20px; font-weight:900;">PranPixl</h1>', unsafe_allow_html=True)
 
 with h_col2:
-    # Language selector with Indian options
-    lang_choice = st.selectbox("Select Language", list(translations.keys()), label_visibility="collapsed")
+    lang_choice = st.selectbox("Language", list(translations.keys()), label_visibility="collapsed")
     ui = translations[lang_choice]
     if st.button(ui["toggle_light"] if st.session_state.theme == 'light' else ui["toggle_dark"], use_container_width=True):
         st.session_state.theme = 'dark' if st.session_state.theme == 'light' else 'light'
@@ -159,33 +175,35 @@ with h_col2:
 
 st.markdown(f'<div class="watermark-container"><div class="watermark-text">{ui["watermark"]}</div></div>', unsafe_allow_html=True)
 
-# 6. Content Logic
+# 6. Main Workspace
 uploaded_file = st.file_uploader("", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
 
 if not uploaded_file:
-    st.markdown(f"<h3 style='text-align: center; color: {text_color}; margin-top: 10vh;'>{ui['instruction']}</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align: center; color: {text_color}; margin-top: 15vh;'>{ui['instruction']}</h3>", unsafe_allow_html=True)
 else:
-    with st.spinner('Scanning...'):
-        time.sleep(1.2)
-        item_name = "Premium Ethnic Wear" # Example item for Indian context
+    with st.spinner('Deep Scanning Object...'):
+        time.sleep(1.5)
+        item_name = "Premium Sneakers" # Simulated AI Tagging
         market_data = get_live_market_data(item_name)
         cheapest_platform = min(market_data, key=lambda x: market_data[x]['numeric_price'])
 
+    # Scanned Item Preview
     r_col1, r_col2 = st.columns([1, 2])
     with r_col1:
-        st.image(uploaded_file, width=250)
+        st.image(uploaded_file, width=280)
     with r_col2:
-        st.markdown(f"<h2 style='color: {text_color};'>{item_name}</h2>", unsafe_allow_html=True)
-        st.info(f"{ui['scan_status']}: {ui['ready']}")
+        st.markdown(f"<h2 style='color: {text_color}; margin-bottom:0;'>{item_name}</h2>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: {text_color}; opacity:0.7;'>{ui['scan_status']}: <span style='color:#2E7D32; font-weight:bold;'>{ui['ready']}</span></p>", unsafe_allow_html=True)
+        st.success("Matching found across 4 major Indian marketplaces.")
 
-    st.divider()
+    st.markdown("<br>", unsafe_allow_html=True)
 
-    # The platform list
+    # Comparison Grid
     apps = [
-        {"name": "Amazon", "desc": "Global marketplace."},
-        {"name": "Flipkart", "desc": "India's favorites."},
-        {"name": "Myntra", "desc": "Premium lifestyle."},
-        {"name": "Ajio", "desc": "Artisanal fashion."}
+        {"name": "Amazon", "sub": "Global Marketplace"},
+        {"name": "Flipkart", "sub": "Big Billion Deals"},
+        {"name": "Myntra", "sub": "Style & Fashion"},
+        {"name": "Ajio", "sub": "Handpicked Trends"}
     ]
 
     cols = st.columns(len(apps))
@@ -193,23 +211,31 @@ else:
         name = app['name']
         details = market_data[name]
         with cols[i]:
-            # Highlight the cheapest option
-            badge_html = f'<div class="best-badge">✨ {ui["best_deal"]}</div>' if name == cheapest_platform else '<div style="height:45px;"></div>'
+            badge = f'<div class="best-badge">🏆 {ui["best_deal"]}</div>' if name == cheapest_platform else '<div style="height:42px;"></div>'
             
             st.markdown(f"""
                 <div class="result-card">
-                    {badge_html}
-                    <h2 style="color: {text_color}; margin-top:0;">{name}</h2>
-                    <div class="price-tag">{details['price']}</div>
-                    <div class="rating-tag" style="color:#FBC02D;">★ {details['rating']}</div>
-                    <p style="color: {text_color}; opacity: 0.7; font-size: 0.8rem;">{details['reviews']} Reviews</p>
-                    <hr style="border: 0.5px solid {border_color}; opacity: 0.3;">
-                    <p style="color: {text_color}; text-align: left; font-size: 0.95rem;">
-                        • {details['delivery']} Delivery<br>
-                        • COD Available<br>
-                        • 100% Original
-                    </p>
+                    <div>
+                        {badge}
+                        <h2 style="color: {text_color}; margin:0;">{name}</h2>
+                        <p style="font-size:0.7rem; color:{text_color}; opacity:0.6; margin-bottom:10px;">{app['sub']}</p>
+                        <div class="price-tag">{details['price']}</div>
+                        <div style="color:#FBC02D; font-weight:bold;">★ {details['rating']} <span style="font-size:0.8rem; color:{text_color}; opacity:0.5;">({details['reviews']})</span></div>
+                        
+                        <div class="product-desc">{details['desc']}</div>
+                    </div>
+                    
+                    <div style="text-align: left; font-size: 0.9rem; color: {text_color};">
+                        <hr style="border: 0.5px solid {border_color}; opacity: 0.2;">
+                        <b>📦 {details['delivery']} Delivery</b><br>
+                        ✅ Verified Authentic<br>
+                        🔄 7-Day Replacement
+                    </div>
                 </div>
             """, unsafe_allow_html=True)
-            if st.button(f"{ui['buy']} @ {name}", key=f"btn_{name}", use_container_width=True):
-                st.toast(f"Redirecting...")
+            
+            # Action Button
+            if st.button(f"{ui['buy']}", key=f"btn_{name}", use_container_width=True):
+                st.toast(f"Opening {name} Store...")
+
+st.markdown("""<div style="position: fixed; bottom: 20px; right: 20px; width: 45px; height: 45px; background: white; border: 2.5px solid black; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.7rem; cursor: pointer;">HELP</div>""", unsafe_allow_html=True)
