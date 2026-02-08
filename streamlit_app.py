@@ -1,96 +1,106 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vintage Coffee App</title>
+import streamlit as st
+
+# Configure the page to be wide by default
+st.set_page_config(layout="wide")
+
+# This is the single-file monolithic structure
+app_code = """
+<style>
+    /* 1. VINTAGE COFFEE THEME VARIABLES */
+    :root {
+        --espresso: #3d2b1f;
+        --mocha: #6f4e37;
+        --latte: #c0a080;
+        --cream: #f5f5dc;
+        --paper: #ece0d1;
+        --border: #a67c52;
+    }
+
+    /* 2. LAYOUT RESET */
+    /* We hide Streamlit's default padding to take over the screen */
+    .stApp {
+        padding: 0;
+    }
     
-    <style>
-        /* Vintage Color Palette */
-        :root {
-            --espresso: #3d2b1f;
-            --mocha: #6f4e37;
-            --latte: #c0a080;
-            --cream: #f5f5dc;
-            --paper: #ece0d1;
-            --border: #a67c52;
-        }
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
 
-        * {
-            box-sizing: border-box;
-        }
-        
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            /* Using a Serif font for that vintage feel */
-            font-family: 'Georgia', serif;
-            background-color: var(--paper);
-            color: var(--espresso);
-        }
+    .main-container {
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+        position: fixed;
+        top: 0;
+        left: 0;
+        font-family: 'Georgia', serif;
+    }
 
-        /* The 2-Part Layout Container */
-        .container {
-            display: flex;
-            height: 100vh;
-            width: 100vw;
-        }
+    /* 3. SIDEBAR (1/3 Width) */
+    .sidebar {
+        flex: 1; 
+        background-color: var(--espresso);
+        color: var(--cream);
+        border-right: 5px double var(--border);
+        padding: 40px 30px;
+        overflow-y: auto;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+    }
 
-        /* Sidebar: 1 part (1/3) */
-        .sidebar {
-            flex: 1; 
-            background-color: var(--espresso);
-            color: var(--cream);
-            border-right: 4px double var(--border);
-            padding: 30px;
-            overflow-y: auto;
-        }
+    /* 4. MAIN SECTION (2/3 Width) */
+    .main-section {
+        flex: 2;
+        background-color: var(--paper);
+        padding: 60px;
+        overflow-y: auto;
+        color: var(--espresso);
+        /* Subtle parchment texture */
+        background-image: radial-gradient(var(--paper) 70%, #e3d5c5 100%);
+    }
 
-        /* Main Content: 2 parts (2/3) */
-        .main-section {
-            flex: 2;
-            background-color: var(--paper);
-            padding: 40px;
-            overflow-y: auto;
-            /* Subtle parchment texture effect */
-            background-image: radial-gradient(var(--paper) 70%, #e3d5c5 100%);
-        }
+    /* TYPOGRAPHY */
+    h1, h2 {
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-bottom: 2px solid var(--mocha);
+        padding-bottom: 10px;
+    }
 
-        h2 {
-            border-bottom: 2px solid var(--mocha);
-            padding-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    .sidebar h2 {
+        color: var(--latte);
+        border-bottom-color: var(--latte);
+    }
 
-        .sidebar h2 {
-            border-bottom-color: var(--latte);
-            color: var(--latte);
-        }
+    p {
+        line-height: 1.8;
+        font-style: italic;
+    }
 
-        p {
-            line-height: 1.6;
-            font-style: italic;
-        }
-    </style>
-</head>
-<body>
+    /* CUSTOM SCROLLBAR for that vintage look */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: var(--paper);
+    }
+    ::-webkit-scrollbar-thumb {
+        background: var(--mocha);
+    }
+</style>
 
-    <div class="container">
-        <aside class="sidebar">
-            <h2>The Blend</h2>
-            <p>Navigation and filters would sit here, wrapped in the warmth of a dark roast.</p>
-        </aside>
-
-        <main class="main-section">
-            <h2>Main Gallery</h2>
-            <p>Your content area now has a parchment-style finish. It's clean, readable, and distinctly vintage.</p>
-        </main>
+<div class="main-container">
+    <div class="sidebar">
+        <h2>The Blend</h2>
+        <p>This is your control panel.</p>
+        <p>Use this area for navigation, filters, or settings.</p>
     </div>
 
-    <script>
-        console.log("Senior Dev: Vintage Coffee theme applied.");
-    </script>
-</body>
-</html>
+    <div class="main-section">
+        <h1>Vintage Workspace</h1>
+        <p>This is your main canvas. Everything here is styled with the coffee-brown palette and a 2/3 ratio layout.</p>
+        <p>The code is fully contained in one file and ready for your next instruction.</p>
+    </div>
+</div>
+"""
+
+# Render the entire app
+st.markdown(app_code, unsafe_allow_html=True)
