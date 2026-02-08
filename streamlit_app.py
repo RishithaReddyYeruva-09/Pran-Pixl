@@ -1,39 +1,49 @@
 import streamlit as st
 
 # Set page title and layout
-st.set_page_config(page_title="Pran Pixl", layout="wide")
+st.set_page_config(page_title='PranPixl', page_icon='🖼️', layout='wide')
 
-# Header with logo and language selector
-st.sidebar.image("logo.png", use_column_width=True)  # Assuming logo.png is in your repo
-language = st.sidebar.selectbox("Select Language", ["English", "Spanish", "French"])
+# Header with logo and branding
+st.markdown("<h1 style='text-align: center;'>PranPixl</h1>", unsafe_allow_html=True)
+# Assuming logo is removed and just text branding is used.
 
-# Left sidebar for image upload
-st.sidebar.header("Upload Image")
-uploaded_file = st.sidebar.file_uploader("Drag and drop your image here", type=["jpg", "png", "jpeg"])
+# Sidebar for image upload
+st.sidebar.header('Upload Your Image')
+uploaded_file = st.sidebar.file_uploader("Choose a file", type=['jpg', 'jpeg', 'png'])
 
-# Display scanned item name
 if uploaded_file is not None:
-    st.image(uploaded_file, caption="Uploaded Image.", use_column_width=True)
-    # Assume scanned_item_name is derived from some processing
-    scanned_item_name = "Sample Item Name"  # Placeholder
-    st.write(f"Scanned Item Name: {scanned_item_name}")
+    
+    # Image display
+    st.image(uploaded_file, caption='Uploaded Image.', use_column_width=True)
+    
+    # Code for product detection based on color analysis should go here
 
-# Marketplace cards for Amazon, Flipkart, Myntra
-st.title("Marketplace Options")
-# Placeholder for product listings
-products = [
-    {"name": "Amazon Product Name", "price": "$25", "rating": "4.5", "link": "https://amazon.com"},
-    {"name": "Flipkart Product Name", "price": "$20", "rating": "4.0", "link": "https://flipkart.com"},
-    {"name": "Myntra Product Name", "price": "$30", "rating": "4.1", "link": "https://myntra.com"},
+    # Example placeholder for product detection logic:
+    # product_info = detect_products(uploaded_file)
+    # Display product cards
+    # for product in product_info:
+    #     st.card(product['name'], product['image'], product['price'], product['link'])
+
+# Language selector
+language = st.selectbox('Select Language', ['English', 'Hindi', 'Telugu'])
+
+# Marketplace cards (mock data)
+marketplace_data = [
+    {'name': 'Product 1', 'price': '$20', 'rating': '4.5', 'link': 'http://amazon.com'},
+    {'name': 'Product 2', 'price': '$30', 'rating': '4.6', 'link': 'http://flipkart.com'},
+    {'name': 'Product 3', 'price': '$25', 'rating': '4.8', 'link': 'http://myntra.com'},
 ]
 
-for product in products:
-    st.card(product['name'])
-    st.write(f"Price: {product['price']}, Rating: {product['rating']}")
-    if st.button("Buy Now", key=product['name']):
-        st.write(f"Redirecting to {product['link']}...")
+st.header('Marketplace Options')
+for product in marketplace_data:
+    st.markdown(f"### {product['name']}")
+    st.markdown(f"**Price:** {product['price']} | **Rating:** {product['rating']}")
+    st.markdown(f"[Buy Here]({product['link']})")
 
-# Feedback button in bottom right corner
-if st.button("Feedback"):
-    st.write("Thanks for your feedback!")
+# Feedback button
+feedback = st.sidebar.button('Give Feedback')
+if feedback:
+    st.sidebar.text_area('Your feedback here:')
+    st.sidebar.button('Submit')
 
+# Note: Make sure to handle the upload images and products detection code properly, and integrate them as needed.
