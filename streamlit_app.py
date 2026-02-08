@@ -3,8 +3,8 @@ import streamlit as st
 # Step 1: Force wide mode
 st.set_page_config(layout="wide", page_title="Vintage App", page_icon="📜")
 
-# Step 2: Custom CSS for the Header and Layout
-interface_css = """
+# Step 2: Integrated CSS
+st.markdown("""
 <style>
     :root {
         --espresso: #3d2b1f;
@@ -19,127 +19,120 @@ interface_css = """
     header { visibility: hidden; }
     footer { visibility: hidden; }
 
+    /* Main Layout positioning */
     .app-wrapper {
         display: flex;
         flex-direction: column;
         height: 100vh;
         width: 100vw;
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         font-family: 'Georgia', serif;
     }
 
-    /* HEADER STYLING */
-    .top-nav {
+    /* HEADER: FLEX CONTAINER */
+    .top-nav-container {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        padding: 10px 40px;
+        justify-content: space-between;
+        padding: 10px 30px;
         background-color: white;
-        border-bottom: 2px solid #eeeeee;
-        height: 70px;
-        z-index: 1000;
+        border-bottom: 1px solid #ddd;
+        height: 65px;
+        z-index: 1001;
     }
 
-    .logo-section {
+    .logo-group {
         display: flex;
         align-items: center;
         gap: 12px;
     }
 
-    .logo-box {
-        width: 35px;
-        height: 35px;
-        background: linear-gradient(135deg, #00ffcc, #006666);
+    .logo-square {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #00ffcc, #008888);
         border-radius: 6px;
     }
 
-    .brand-text {
-        color: #333;
+    .brand-name {
         font-weight: 800;
-        font-size: 1.2rem;
-        letter-spacing: 1px;
+        font-size: 1.1rem;
+        color: #222;
+        letter-spacing: 0.5px;
     }
 
-    /* SPLIT BODY */
-    .content-body {
+    /* Layout Split */
+    .content-split {
         display: flex;
         flex: 1;
         overflow: hidden;
     }
 
-    .sidebar {
-        flex: 1; 
+    .sidebar-panel {
+        flex: 1;
         background-color: var(--espresso);
         color: var(--cream);
         border-right: 5px double var(--border);
-        padding: 40px 30px;
+        padding: 30px;
     }
 
-    .main-section {
-        flex: 2; 
+    .main-panel {
+        flex: 2;
         background-color: var(--paper);
         color: var(--espresso);
-        padding: 60px;
+        padding: 50px;
+        overflow-y: auto;
     }
 
-    /* Positioning the Streamlit Popover to the right */
-    .stPopover {
-        position: fixed;
-        right: 40px;
-        top: 15px;
-        z-index: 2000;
+    /* Styling the Streamlit Popover Button to look like a small header button */
+    div[data-testid="stPopover"] > button {
+        background-color: transparent !important;
+        border: 1px solid #ddd !important;
+        color: #555 !important;
+        padding: 4px 12px !important;
+        border-radius: 4px !important;
+        font-size: 0.85rem !important;
+        height: auto !important;
     }
 </style>
-"""
+""", unsafe_allow_html=True)
 
-# Inject CSS
-st.markdown(interface_css, unsafe_allow_html=True)
+# Step 3: Header Rendering
+# We use a container to wrap the logo and the Streamlit widget on the same line
+header_placeholder = st.empty()
 
-# Step 3: Top Navigation (Logo Area)
-# We render the HTML for the logo first
-logo_html = """
-<div class="top-nav">
-    <div class="logo-section">
-        <div class="logo-box"></div>
-        <div class="brand-text">PRANPIXL <span style="font-size: 0.7rem; color: #888;">ADVANCED VISUAL INTELLIGENCE</span></div>
-    </div>
-    <div></div> </div>
-"""
-st.markdown(logo_html, unsafe_allow_html=True)
-
-# Step 4: The Language Dropdown Button
-# Using Streamlit's Popover as a "Button with Dropdown"
 with st.container():
-    col1, col2 = st.columns([8, 1]) # Push the popover to the far right
-    with col2:
-        with st.popover("🌐 Language"):
-            selected_lang = st.radio(
-                "Select Language",
-                ["English", "Hindi", "Spanish", "French"],
-                index=0
-            )
-
-# Step 5: The Layout Content
-body_html = f"""
-<div class="app-wrapper" style="margin-top: 70px;">
-    <div class="content-body">
-        <div class="sidebar">
-            <h2>The Blend</h2>
-            <p>Active Language: <b>{selected_lang}</b></p>
-            <p>The sidebar maintains its 1/3 width as requested.</p>
-        </div>
-
-        <div class="main-section">
-            <h1>Vintage Workspace</h1>
-            <p>The logo is now pinned to the left, and the language selector is a functional button-dropdown on the right.</p>
-            <div style="margin-top: 40px; padding: 20px; border: 1px dashed var(--border);">
-                <i>Document initialized in {selected_lang} mode...</i>
+    # This creates a layout for the header
+    h_col1, h_col2 = st.columns([5, 1])
+    
+    with h_col1:
+        st.markdown("""
+            <div class="logo-group" style="padding-top: 10px;">
+                <div class="logo-square"></div>
+                <div class="brand-name">PRANPIXL <span style="font-weight: 300; font-size: 0.7rem; color: #888; margin-left: 10px;">ADVANCED VISUAL INTELLIGENCE</span></div>
             </div>
+        """, unsafe_allow_html=True)
+    
+    with h_col2:
+        # The Button/Dropdown sitting on the same line
+        with st.popover("English ▾"):
+            selected_lang = st.radio("Select Language", ["English", "Hindi", "French"], label_visibility="collapsed")
+
+# Step 4: Body Content (The 1/3 - 2/3 Split)
+st.markdown(f"""
+<div class="app-wrapper" style="margin-top: 65px;">
+    <div class="content-split">
+        <div class="sidebar-panel">
+            <h2 style="color: var(--latte); border-bottom: 2px solid var(--latte);">The Blend</h2>
+            <p>Controls and metadata go here.</p>
+        </div>
+        <div class="main-panel">
+            <h1 style="border-bottom: 2px solid var(--mocha);">Vintage Workspace</h1>
+            <p>The interface is now aligned. The logo and language selector share the header line.</p>
+            <p style="margin-top: 20px; font-style: italic;">Current Language: {selected_lang}</p>
         </div>
     </div>
 </div>
-"""
-
-st.markdown(body_html, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
