@@ -7,162 +7,119 @@ st.set_page_config(page_title="PranPixl", layout="wide")
 if 'theme' not in st.session_state:
     st.session_state.theme = 'light'
 
-# 2. Indian Language Translations
+# 2. Translation Dictionary (Indian Languages)
 translations = {
     "English": {
         "instruction": "drang drop the image for scanning",
-        "ready": "Ready to Scan",
+        "ready": "Image Received",
         "toggle_light": "☕ Dark Roast",
         "toggle_dark": "🥛 Light Latte",
-        "watermark": "PRANPIXL",
-        "scanned_name": "Scanned Item Name",
-        "buy": "Buy Now"
+        "watermark": "PRANPIXL"
     },
     "हिन्दी": {
         "instruction": "स्कैनिंग के लिए छवि को यहाँ खींचें और छोड़ें",
-        "ready": "स्कैन के लिए तैयार",
+        "ready": "छवि प्राप्त हुई",
         "toggle_light": "☕ डार्क रोस्ट",
         "toggle_dark": "🥛 लाइट लैट्टे",
-        "watermark": "प्राणपिक्सेल",
-        "scanned_name": "स्कैन की गई वस्तु",
-        "buy": "अभी खरीदें"
+        "watermark": "प्राणपिक्सेल"
+    },
+    "বাংলা": {
+        "instruction": "স্ক্যান করার জন্য ছবি এখানে ড্র্যাগ এবং ড্রপ করুন",
+        "ready": "ছবি পাওয়া গেছে",
+        "toggle_light": "☕ ডার্ক রোস্ট",
+        "toggle_dark": "🥛 লাইট ল্যাটে",
+        "watermark": "প্রাণপিক্সেল"
+    },
+    "தமிழ்": {
+        "instruction": "ஸ்கேன் செய்ய படத்தை இங்கே இழுத்து விடவும்",
+        "ready": "படம் பெறப்பட்டது",
+        "toggle_light": "☕ டார்க் ரோஸ்ட்",
+        "toggle_dark": "🥛 லைட் லேட்டே",
+        "watermark": "பிரான்பிக்சல்"
+    },
+    "తెలుగు": {
+        "instruction": "స్కానింగ్ కోసం చిత్రాన్ని ఇక్కడ డ్రాగ్ చేసి వదలండి",
+        "ready": "చిత్రం అందింది",
+        "toggle_light": "☕ డార్క్ రోస్ట్",
+        "toggle_dark": "🥛 లైట్ లాట్టే",
+        "watermark": "ప్రాన్‌పిక్సెల్"
     }
 }
 
-# 3. Dynamic Styling
+# 3. Theme & Responsive CSS
 if st.session_state.theme == 'light':
     bg_color, text_color, box_bg, border_color = "#D7CCC8", "#3E2723", "rgba(255, 255, 255, 0.4)", "#3E2723"
-    card_bg = "rgba(255, 255, 255, 0.5)"
+    watermark_opacity = "0.2"
 else:
     bg_color, text_color, box_bg, border_color = "#1B1411", "#D7CCC8", "rgba(62, 39, 35, 0.6)", "#D7CCC8"
-    card_bg = "rgba(45, 30, 25, 0.8)"
+    watermark_opacity = "0.15"
 
 st.markdown(f"""
     <style>
-    /* Global Styles */
-    html, body, [data-testid="stAppViewContainer"] {{
-        background-color: {bg_color} !important;
-        color: {text_color};
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stMainViewContainer"], .main .block-container {{
         overflow: hidden !important;
         height: 100vh !important;
+        background-color: {bg_color} !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }}
-
-    /* Header Styling */
-    .header-divider {{
-        border-bottom: 3px solid {border_color};
-        width: 100%;
-        margin-top: 5px;
+    .watermark-container {{
+        position: fixed; top: 55%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none;
     }}
-
-    /* Horizontal Scroll Container for Results */
-    .scroll-wrapper {{
-        display: flex;
-        overflow-x: auto;
-        gap: 20px;
-        padding: 10px 0;
-        width: 100%;
-        scrollbar-width: thin;
+    .watermark-text {{
+        font-size: 14vw; font-weight: 900; font-style: italic; color: {text_color};
+        opacity: {watermark_opacity}; font-family: sans-serif; white-space: nowrap;
     }}
-
-    .market-card {{
-        flex: 0 0 280px;
-        background-color: {card_bg};
-        border: 3px solid {border_color};
-        border-radius: 30px;
-        padding: 20px;
-        text-align: left;
+    .central-workspace {{
+        position: absolute; top: 130px; bottom: 0; left: 0; right: 0;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5;
     }}
-
-    .buy-btn {{
-        background-color: white;
-        color: black !important;
-        border: 2px solid black;
-        padding: 5px 15px;
-        font-weight: bold;
-        text-align: center;
-        display: block;
-        margin-top: 15px;
-        text-decoration: none;
-    }}
-
-    /* Feedback Button (Bottom Right) */
-    .feedback-box {{
-        position: fixed; bottom: 20px; right: 20px;
-        width: 40px; height: 40px; border: 3px solid #000;
-        background: white; border-radius: 8px;
+    [data-testid="stFileUploader"] section {{
+        padding: 5vh 2vw !important; background-color: {box_bg} !important; 
+        border: 3px dashed {border_color} !important; border-radius: 30px !important; backdrop-filter: blur(4px);
     }}
     </style>
     """, unsafe_allow_html=True)
 
-# 4. Persistent Header
-h_col1, h_col2 = st.columns([2, 1])
+# 4. Header Section
+h_col1, h_col2 = st.columns([2, 1.2])
+
 with h_col1:
     st.markdown(f"""
-        <div style="display: flex; align-items: center; gap: 15px; padding-left: 5%;">
+        <div style="display: flex; align-items: center; gap: 15px; padding-left: 5%; padding-top: 15px;">
             <div style="border: 3px solid #000; padding: 5px 15px; background: white; color: black; font-weight: bold;">logo</div>
             <div style="font-size: 1.5rem; font-weight: bold; color: {text_color};">PranPixl</div>
         </div>
     """, unsafe_allow_html=True)
 
 with h_col2:
-    b1, b2 = st.columns([1, 1])
-    with b2:
-        lang = st.selectbox("Lang", list(translations.keys()), label_visibility="collapsed")
+    st.markdown('<div style="padding-top: 15px;">', unsafe_allow_html=True)
+    btn_col1, btn_col2 = st.columns([1, 1])
+    
+    with btn_col2:
+        lang = st.selectbox("Language", list(translations.keys()), label_visibility="collapsed")
         ui = translations[lang]
-    with b1:
-        theme_label = ui["toggle_light"] if st.session_state.theme == 'light' else ui["toggle_dark"]
-        if st.button(theme_label, use_container_width=True):
+
+    with btn_col1:
+        theme_btn = ui["toggle_light"] if st.session_state.theme == 'light' else ui["toggle_dark"]
+        if st.button(theme_btn, use_container_width=True):
             st.session_state.theme = 'dark' if st.session_state.theme == 'light' else 'light'
             st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown('<div class="header-divider"></div>', unsafe_allow_html=True)
+st.markdown(f"<div style='border-bottom: 3px solid {border_color}; width: 100%; margin-top: 10px;'></div>", unsafe_allow_html=True)
 
-# 5. Logic Switch (First Page vs Second Page)
-# We hide the uploader in the sidebar to act as the trigger
-uploaded_file = st.sidebar.file_uploader(ui["instruction"], type=["png", "jpg", "jpeg"])
+# 5. Background Watermark (Dynamic Language)
+st.markdown(f'<div class="watermark-container"><div class="watermark-text">{ui["watermark"]}</div></div>', unsafe_allow_html=True)
 
-if not uploaded_file:
-    # --- PAGE 1: LANDING (KEEP UNCHANGED) ---
-    st.markdown(f'<div style="position:fixed; top:55%; left:50%; transform:translate(-50%,-50%); opacity:0.2; font-size:15vw; font-weight:900; font-style:italic; color:{text_color}; pointer-events:none;">{ui["watermark"]}</div>', unsafe_allow_html=True)
-    _, mid, _ = st.columns([1, 2, 1])
-    with mid:
-        st.markdown(f"<br><br><br><h2 style='text-align: center;'>{ui['instruction']}</h2>", unsafe_allow_html=True)
-        # Placeholder visual for the "centered" feel
-        st.markdown(f"""<div style="height: 250px; border: 3px dashed {border_color}; border-radius: 30px; display: flex; align-items: center; justify-content: center; background: {box_bg};">
-            <p>Please use sidebar to upload for scanning</p>
-        </div>""", unsafe_allow_html=True)
+# 6. Central Workspace (Dynamic Language)
+st.markdown('<div class="central-workspace">', unsafe_allow_html=True)
+st.markdown(f"<h3 style='text-align: center; color: {text_color}; margin-bottom: 2vh;'>{ui['instruction']}</h3>", unsafe_allow_html=True)
 
-else:
-    # --- PAGE 2: RESULTS (BASED ON NEW REFERENCE) ---
-    col_sidebar, col_results = st.columns([1, 3])
-    
-    with col_sidebar:
-        # Left side: Drag & Drop box remains visible but as a "Sidebar"
-        st.markdown(f"<div style='border: 3px solid {border_color}; padding: 20px; border-radius: 10px; height: 350px; background: {box_bg}; text-align: center;'>", unsafe_allow_html=True)
-        st.write(ui["instruction"])
-        st.image(uploaded_file, use_container_width=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    with col_results:
-        # Top Section: Uploaded preview and name
-        res_img, res_name = st.columns([1, 2])
-        with res_img:
-            st.image(uploaded_file, width=150)
-        with res_name:
-            st.markdown(f"<br><h2 style='color:{text_color}'>{ui['scanned_name']}</h2>", unsafe_allow_html=True)
-
-        # Horizontal Scroll Section for Marketplaces
-        marketplaces = ["Amazon", "Flipkart", "Myntra", "Ajio", "Tata CLiQ", "Meesho", "Nykaa"]
-        cards_html = "".join([f"""
-            <div class="market-card">
-                <h4 style="margin:0;">{m}</h4>
-                <p style="font-size:0.8rem; margin:10px 0;">Includes description, product info, reviews.</p>
-                <p style="font-weight:bold; font-size: 1.2rem;">₹1,499</p>
-                <a href="#" class="buy-btn">{ui['buy']}</a>
-            </div>
-        """ for m in marketplaces])
-
-        st.markdown(f'<div class="scroll-wrapper">{cards_html}</div>', unsafe_allow_html=True)
-
-# Feedback Button
-st.markdown('<div class="feedback-box"></div>', unsafe_allow_html=True)
+_, uploader_col, _ = st.columns([1, 4, 1])
+with uploader_col:
+    uploaded_file = st.file_uploader("", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
+    if uploaded_file:
+        st.image(uploaded_file, width=220)
+        st.success(ui["ready"])
+st.markdown('</div>', unsafe_allow_html=True)
