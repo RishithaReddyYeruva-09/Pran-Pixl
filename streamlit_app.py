@@ -1,116 +1,134 @@
 import streamlit as st
 
 # 1. Page Configuration
-st.set_page_config(layout="wide", page_title="Vintage App", page_icon="📜")
+st.set_page_config(layout="wide", page_title="PRANPIXL", page_icon="🖼️")
 
-# 2. Enhanced CSS
+# 2. Refined CSS with Vintage-Specific Font Colors
 st.markdown("""
 <style>
     /* Hide default Streamlit overhead */
     header { visibility: hidden; }
     footer { visibility: hidden; }
     [data-testid="stHeader"] { background: rgba(0,0,0,0); }
-
+    
+    /* THEME VARIABLES */
     :root {
-        --espresso: #3d2b1f;
-        --mocha: #6f4e37;
-        --latte: #c0a080;
-        --cream: #f5f5dc;
-        --paper: #ece0d1;
-        --border: #a67c52;
+        --espresso: #251e18;      /* Deep dark brown for main text */
+        --mocha: #3d2b1f;         /* Medium brown for headers */
+        --latte: #c0a080;         /* Golden tan for sidebar headers */
+        --cream: #f5f5dc;         /* Off-white for sidebar body text */
+        --paper: #ece0d1;         /* Light background color */
+        --accent: #00ffcc;        /* Branding Cyan */
     }
 
-    /* THE HEADER BAR */
-    .custom-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 40px;
-        height: 70px;
-        background-color: white;
-        border-bottom: 1px solid #e0e0e0;
+    /* THE TOP HEADER */
+    .nav-bar {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
-        z-index: 9999;
-    }
-
-    /* THE MAIN WRAPPER (Starts below header) */
-    .app-container {
+        height: 60px;
+        background-color: #111; 
         display: flex;
-        height: calc(100vh - 70px);
-        margin-top: 70px;
-        font-family: 'Georgia', serif;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        z-index: 9999;
+        border-bottom: 1px solid #333;
     }
 
-    /* 1/3 SIDEBAR */
-    .vintage-sidebar {
+    .brand-name {
+        color: #FFFFFF; /* Bright white for brand visibility */
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+    }
+
+    /* THE MAIN WRAPPER */
+    .main-wrapper {
+        display: flex;
+        margin-top: 60px; 
+        height: calc(100vh - 60px);
+        width: 100vw;
+    }
+
+    /* SIDEBAR FONT COLORS (Dark background -> Light text) */
+    .left-sidebar {
         flex: 1;
         background-color: var(--espresso);
-        color: var(--cream);
-        border-right: 5px double var(--border);
-        padding: 40px 30px;
-        overflow-y: auto;
+        padding: 40px;
+        border-right: 1px solid #444;
+        color: var(--cream); /* Default body text color */
     }
 
-    /* 2/3 MAIN SECTION */
-    .vintage-main {
+    .left-sidebar h2 {
+        color: var(--latte) !important; /* Sidebar headers */
+        font-family: 'Georgia', serif;
+        border-bottom: 1px solid var(--mocha);
+        padding-bottom: 10px;
+    }
+
+    /* MAIN CONTENT FONT COLORS (Light background -> Dark text) */
+    .right-content {
         flex: 2;
         background-color: var(--paper);
-        color: var(--espresso);
-        padding: 60px;
+        padding: 40px;
         overflow-y: auto;
+        color: var(--espresso); /* Main section body text */
     }
 
-    /* Styling the Language Button to be small and clean */
+    .right-content h1 {
+        color: var(--mocha) !important; /* Main page header */
+        font-family: 'Georgia', serif;
+        border-bottom: 2px solid var(--mocha);
+        padding-bottom: 15px;
+    }
+
+    /* Streamlit Widget Text Color Correction */
+    .stRadio label, .stMarkdown p {
+        color: inherit !important;
+    }
+
+    /* Popover Button Text */
     div[data-testid="stPopover"] > button {
-        border-radius: 20px !important;
-        border: 1px solid #ddd !important;
-        padding: 2px 15px !important;
-        font-size: 0.8rem !important;
-        background-color: transparent !important;
+        background-color: #222 !important;
+        color: white !important;
+        border: 1px solid #444 !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# 3. THE HEADER (LOGO + BUTTON)
-# We use a container to ensure these appear at the very top of the app
+# 3. RENDER HEADER (Logo + Language)
 with st.container():
-    # This HTML creates the background bar
-    st.markdown('<div class="custom-header"></div>', unsafe_allow_html=True)
-    
-    # We use st.columns to place widgets inside that bar area
-    # Note: Streamlit widgets have their own z-index, so we place them in columns
-    col_logo, col_filler, col_lang = st.columns([2, 5, 1])
-    
-    with col_logo:
-        # Pushing the logo into the header space
-        st.markdown("""
-            <div style="display: flex; align-items: center; gap: 12px; height: 70px;">
-                <div style="width: 30px; height: 30px; background: #00ffcc; border-radius: 6px;"></div>
-                <div style="font-weight: 800; font-size: 1.1rem; color: #333;">PRANPIXL</div>
+    c1, c2, c3 = st.columns([1, 4, 0.5])
+    with c1:
+        st.markdown(f"""
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 15px;">
+                <div style="width: 24px; height: 24px; background-color: var(--accent); border-radius: 4px;"></div>
+                <div class="brand-name">PRANPIXL</div>
             </div>
         """, unsafe_allow_html=True)
     
-    with col_lang:
-        # Pushing the language button into the header space
-        st.write('<div style="height: 15px;"></div>', unsafe_allow_html=True) # Vertical spacer
+    with c3:
+        st.markdown('<div style="margin-top: 12px;">', unsafe_allow_html=True)
         with st.popover("English ▾"):
-            selected_lang = st.radio("Language", ["English", "Hindi", "French"], label_visibility="collapsed")
+            lang = st.radio("Language", ["English", "Hindi", "French"], label_visibility="collapsed")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-# 4. THE CONTENT SPLIT
-# We render this after the header logic
+# 4. RENDER BODY CONTENT
 st.markdown(f"""
-<div class="app-container">
-    <div class="vintage-sidebar">
-        <h2 style="color: var(--latte);">The Blend</h2>
-        <p>Your controls are now active.</p>
-        <p>Selected: <b>{selected_lang}</b></p>
+<div class="nav-bar"></div>
+<div class="main-wrapper">
+    <div class="left-sidebar">
+        <h2>The Blend</h2>
+        <p>This text is now in <b>Cream</b> to stand out against the Espresso background.</p>
+        <p style="font-style: italic; opacity: 0.8;">Active Language: {lang}</p>
     </div>
-    <div class="vintage-main">
-        <h1 style="border-bottom: 2px solid var(--mocha);">Vintage Workspace</h1>
-        <p>The Logo and Language button should now be visible in the top header bar, aligned to the left and right respectively.</p>
+    <div class="right-content">
+        <h1>Vintage Workspace</h1>
+        <p>This text is in <b>Espresso</b> for high readability on the Paper background.</p>
+        <p>The font styles are now separated: <b>Georgia Serif</b> for headers and <b>Sans-Serif/System</b> for UI elements to match your reference image.</p>
     </div>
 </div>
 """, unsafe_allow_html=True)
