@@ -1,14 +1,1 @@
-import streamlit as st
-
-# Streamlit app code
-
-st.title('Image Upload App')
-
-# Update file uploader to allow both png and jpg uploads
-uploaded_file = st.file_uploader('Choose an image...', type=['jpg', 'png', 'jpeg'])
-
-if uploaded_file is not None:
-    # Process the uploaded file
-    st.image(uploaded_file)
-    
-# More app code...
+import streamlit as st\nfrom PIL import Image\nimport numpy as np\nimport requests\nimport io\n\n# Function to detect product and category\ndef detect_product(image):\n    # Replace with actual detection logic\n    confidence_score = 0.95  # Placeholder value\n    category = "Sample Category"  # Placeholder value\n    return category, confidence_score\n\n# Function to fetch pricing data from marketplaces (mockup for example)\ndef fetch_pricing_data(product_category):\n    # Replace with actual API calls\n    return {\n        'Amazon': '$50',\n        'Flipkart': '$45',\n        'Myntra': '$55',\n        'Ajio': '$48'\n    }\n\n# Function to create display card\ndef create_display_card(category, confidence, pricing_data):\n    card_html = f"""\n    <div style=\"border: 2px solid #f1c40f; border-radius: 10px; padding: 10px; margin: 10px; background: url('ripped_paper_texture.png');\">\n        <h4>{category}</h4>\n        <p>Confidence: {confidence*100:.2f}%</p>\n        <h5>Pricing Comparison</h5>\n        <ul>\n            {''.join([f\"<li>{market}: {price}</li>\" for market, price in pricing_data.items()])}\n        </ul>\n    </div>\n    """\n    return card_html\n\n# Streamlit application\nst.title("Product Detection App")\nst.uploaded_file = st.file_uploader("Choose an image...", type=['jpg', 'png', 'jpeg'])\n\nif uploaded_file is not None:\n    image = Image.open(uploaded_file)\n    st.image(image, caption='Uploaded Image.', use_column_width=True)\n    \n    # Detect product and category\n    category, confidence = detect_product(image)\n    pricing_data = fetch_pricing_data(category)\n    \n    # Create and display card\n    display_card_html = create_display_card(category, confidence, pricing_data)\n    st.markdown(display_card_html, unsafe_allow_html=True)\n
