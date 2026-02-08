@@ -1,100 +1,114 @@
 import streamlit as st
 
 # 1. Page Config
-st.set_page_config(page_title="PranPixl", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="PranPixl", layout="wide")
 
-# 2. Hard CSS Overrides for Fixed Sidebar and Coffee Theme
+# 2. Coffee Brown Custom CSS
 st.markdown("""
     <style>
-    /* HIDE SIDEBAR TOGGLE BUTTON COMPLETELY */
-    [data-testid="sidebar-button"] {
-        display: none !important;
-    }
-    
-    /* FORCE SIDEBAR TO STAY OPEN */
-    section[data-testid="stSidebar"] {
-        min-width: 320px !important;
-        max-width: 320px !important;
-        background-color: #3C2A21 !important; /* Espresso Brown */
-        border-right: 4px solid #2A1B15;
-    }
-
-    /* MAIN PAGE BACKGROUND */
+    /* Main Background */
     .stApp {
-        background-color: #D7CCC8; /* Classic Coffee Cream */
+        background-color: #D7CCC8; /* Coffee Cream */
     }
 
-    /* HEADER AREA */
-    .header-box {
+    /* Remove default Streamlit padding */
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 0rem;
+    }
+
+    /* Left Panel (The 'Sidebar' area) */
+    .left-panel {
+        border-right: 3px solid #3C2A21;
+        height: 100vh;
+        padding-right: 20px;
+    }
+
+    /* Logo Box from Sketch */
+    .logo-box {
+        border: 3px solid #000000;
+        width: 120px;
+        height: 60px;
         display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        padding: 10px 0px;
-    }
-
-    /* LOGO BOX */
-    .logo-container {
-        border: 3px solid #3C2A21;
-        padding: 20px;
+        align-items: center;
+        justify-content: center;
         background-color: white;
-        text-align: center;
-        width: 150px;
+        font-weight: bold;
     }
 
-    /* PRANPIXL MAIN TEXT */
-    .main-hero-text {
-        font-size: 120px !important;
-        font-weight: 900;
+    /* Large PRANPIXL Text */
+    .hero-text {
+        font-size: clamp(50px, 10vw, 150px);
+        font-weight: 800;
         font-style: italic;
         color: #3C2A21;
         text-align: center;
-        margin-top: 15vh;
-        letter-spacing: -2px;
-        font-family: 'Helvetica Neue', sans-serif;
+        margin-top: 20vh;
+        font-family: 'Arial Black', Gadget, sans-serif;
     }
 
-    /* LANGUAGE OVAL */
-    div[data-baseweb="select"] {
-        border-radius: 50px !important;
-        border: 2px solid #3C2A21 !important;
-    }
-
-    /* SIDEBAR TEXT */
-    .sidebar-label {
-        color: #D7CCC8 !important;
+    /* Drag and Drop Box Area */
+    .upload-box {
+        border: 2px solid #3C2A21;
+        padding: 40px 10px;
         text-align: center;
-        font-size: 1.1rem;
-        margin-bottom: 20px;
+        margin-top: 50px;
+        background-color: #EFEBE9;
+    }
+
+    /* Header Divider Line */
+    .header-line {
+        border-bottom: 3px solid #000000;
+        margin-bottom: 0px;
+        margin-top: 10px;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# 3. Top Header Section (Logo and Language)
-t1, t2, t3 = st.columns([1, 3, 1])
+# 3. Top Header (Logo and Language)
+h_col1, h_col2, h_col3 = st.columns([1, 4, 1])
 
-with t1:
-    st.markdown('<div class="logo-container">logo</div>', unsafe_allow_html=True)
-    st.markdown("<b style='color:#3C2A21'>PranPixl</b>", unsafe_allow_html=True)
+with h_col1:
+    st.markdown('<div class="logo-box">logo</div>', unsafe_allow_html=True)
+    st.markdown("<p style='margin-top:5px; font-weight:bold;'>PranPixl</p>", unsafe_allow_html=True)
 
-with t3:
-    # Styled language selector
+with h_col3:
+    # Language Selector (Oval style)
     st.selectbox("language", ["English", "French", "Arabic"], label_visibility="collapsed")
 
-# The horizontal line from your sketch
-st.markdown("<hr style='border: 2px solid #3C2A21; margin-top: 5px;'>", unsafe_allow_html=True)
+# Horizontal Line across the whole top
+st.markdown('<div class="header-line"></div>', unsafe_allow_html=True)
 
-# 4. Permanent Sidebar (No Toggle)
-with st.sidebar:
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-label">drang drop the image for scanning</div>', unsafe_allow_html=True)
+# 4. Main Content Layout (Left Column = Fixed Sidebar, Right Column = Main Page)
+# This creates a vertical line that is PERMANENT.
+col_left, col_right = st.columns([1, 3])
+
+with col_left:
+    # This acts as your sidebar
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown("""
+        <div style='text-align: center; color: #3C2A21; font-weight: 500;'>
+            drang drop the image for scanning
+        </div>
+    """, unsafe_allow_html=True)
     
-    # Drag and Drop Box
+    # The actual file uploader
     uploaded_file = st.file_uploader("", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
     
     if uploaded_file:
-        st.markdown("<br>", unsafe_allow_html=True)
         st.image(uploaded_file, use_container_width=True)
-        st.success("Image Loaded")
+        st.markdown("<p style='text-align:center;'>Image ready.</p>", unsafe_allow_html=True)
+    
+    # Styling for the vertical divider
+    st.markdown("""
+        <style>
+            [data-testid="column"]:nth-child(1) {
+                border-right: 3px solid #3C2A21;
+                min-height: 80vh;
+            }
+        </style>
+    """, unsafe_allow_html=True)
 
-# 5. Main Body Text
-st.markdown('<h1 class="main-hero-text">PRANPIXL</h1>', unsafe_allow_html=True)
+with col_right:
+    # The big brand name
+    st.markdown('<h1 class="hero-text">PRANPIXL</h1>', unsafe_allow_html=True)
