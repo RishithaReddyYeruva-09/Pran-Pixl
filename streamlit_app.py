@@ -3,7 +3,7 @@ import streamlit as st
 # Step 1: Force wide mode
 st.set_page_config(layout="wide", page_title="Vintage App", page_icon="📜")
 
-# Step 2: Define CSS with Header Logic
+# Step 2: Custom CSS for the Header and Layout
 interface_css = """
 <style>
     :root {
@@ -19,50 +19,50 @@ interface_css = """
     header { visibility: hidden; }
     footer { visibility: hidden; }
 
-    /* Main Container */
     .app-wrapper {
         display: flex;
-        flex-direction: column; /* Stack header on top */
+        flex-direction: column;
         height: 100vh;
         width: 100vw;
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
         font-family: 'Georgia', serif;
     }
 
-    /* TOP NAVIGATION BAR */
+    /* HEADER STYLING */
     .top-nav {
         display: flex;
-        justify-content: space-between; /* Pushes logo left, language right */
+        justify-content: space-between;
         align-items: center;
-        padding: 15px 40px;
-        background-color: var(--cream);
-        border-bottom: 3px double var(--border);
+        padding: 10px 40px;
+        background-color: white;
+        border-bottom: 2px solid #eeeeee;
+        height: 70px;
         z-index: 1000;
     }
 
     .logo-section {
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 12px;
     }
 
-    .logo-icon {
-        width: 40px;
-        height: 40px;
-        background-color: var(--espresso);
-        border-radius: 8px; /* Matching the rounded-square look in your image */
+    .logo-box {
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(135deg, #00ffcc, #006666);
+        border-radius: 6px;
     }
 
-    .app-name {
-        font-weight: bold;
-        font-size: 1.4rem;
-        color: var(--espresso);
+    .brand-text {
+        color: #333;
+        font-weight: 800;
+        font-size: 1.2rem;
         letter-spacing: 1px;
     }
 
-    /* CONTENT SPLIT (1/3 - 2/3) */
+    /* SPLIT BODY */
     .content-body {
         display: flex;
         flex: 1;
@@ -75,7 +75,6 @@ interface_css = """
         color: var(--cream);
         border-right: 5px double var(--border);
         padding: 40px 30px;
-        overflow-y: auto;
     }
 
     .main-section {
@@ -83,55 +82,64 @@ interface_css = """
         background-color: var(--paper);
         color: var(--espresso);
         padding: 60px;
-        overflow-y: auto;
     }
 
-    /* Streamlit Selectbox override to match vintage style */
-    div[data-baseweb="select"] {
-        border: 1px solid var(--border) !important;
-        background-color: var(--paper) !important;
+    /* Positioning the Streamlit Popover to the right */
+    .stPopover {
+        position: fixed;
+        right: 40px;
+        top: 15px;
+        z-index: 2000;
     }
 </style>
 """
 
-# Step 3: Streamlit Interaction for the Language Dropdown
-with st.sidebar:
-    # We place the logic in the sidebar for Streamlit to track, 
-    # but we will visually position it in the top right using columns.
-    st.markdown("### ⚙️ Settings")
-    lang = st.selectbox("Current Language", ["English", "Hindi", "French", "Spanish"])
-
-# Step 4: Render HTML
+# Inject CSS
 st.markdown(interface_css, unsafe_allow_html=True)
 
-# Constructing the HTML with the Logo Left and Language info Right
-# Note: The dropdown is handled by Streamlit, so we "mimic" its position in the header
-header_html = f"""
-<div class="app-wrapper">
-    <div class="top-nav">
-        <div class="logo-section">
-            <div class="logo-icon"></div>
-            <div class="app-name">PRANPIXL <span style="font-size: 0.8rem; font-weight: normal; opacity: 0.7;">ADVANCED VISUAL INTELLIGENCE</span></div>
-        </div>
-        <div class="language-display">
-            <span style="border: 1px solid var(--border); padding: 5px 15px; border-radius: 5px; font-size: 0.9rem;">
-                🌐 {lang}
-            </span>
-        </div>
+# Step 3: Top Navigation (Logo Area)
+# We render the HTML for the logo first
+logo_html = """
+<div class="top-nav">
+    <div class="logo-section">
+        <div class="logo-box"></div>
+        <div class="brand-text">PRANPIXL <span style="font-size: 0.7rem; color: #888;">ADVANCED VISUAL INTELLIGENCE</span></div>
     </div>
-    
+    <div></div> </div>
+"""
+st.markdown(logo_html, unsafe_allow_html=True)
+
+# Step 4: The Language Dropdown Button
+# Using Streamlit's Popover as a "Button with Dropdown"
+with st.container():
+    col1, col2 = st.columns([8, 1]) # Push the popover to the far right
+    with col2:
+        with st.popover("🌐 Language"):
+            selected_lang = st.radio(
+                "Select Language",
+                ["English", "Hindi", "Spanish", "French"],
+                index=0
+            )
+
+# Step 5: The Layout Content
+body_html = f"""
+<div class="app-wrapper" style="margin-top: 70px;">
     <div class="content-body">
         <div class="sidebar">
             <h2>The Blend</h2>
-            <p>Select your language in the ledger to the left to update the header.</p>
+            <p>Active Language: <b>{selected_lang}</b></p>
+            <p>The sidebar maintains its 1/3 width as requested.</p>
         </div>
 
         <div class="main-section">
             <h1>Vintage Workspace</h1>
-            <p>The top navigation bar now mimics your uploaded layout with the brand on the left and selected language on the right.</p>
+            <p>The logo is now pinned to the left, and the language selector is a functional button-dropdown on the right.</p>
+            <div style="margin-top: 40px; padding: 20px; border: 1px dashed var(--border);">
+                <i>Document initialized in {selected_lang} mode...</i>
+            </div>
         </div>
     </div>
 </div>
 """
 
-st.markdown(header_html, unsafe_allow_html=True)
+st.markdown(body_html, unsafe_allow_html=True)
