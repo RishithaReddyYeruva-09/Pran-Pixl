@@ -91,7 +91,7 @@ col_sidebar, col_main = st.columns([1, 3])
 
 with col_sidebar:
     st.markdown("<br><br>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #3C2A21;'>drang drop the image for scanning</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #3C2A21;'>drag drop the product image for scanning</p>", unsafe_allow_html=True)
     
     # The Uploader
     uploaded_file = st.file_uploader("", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
