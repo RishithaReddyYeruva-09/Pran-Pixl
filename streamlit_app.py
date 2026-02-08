@@ -4,7 +4,7 @@ from PIL import Image
 import numpy as np
 import time
 
-# --- 1. PAGE CONFIG & DESIGN ---
+# --- 1. PAGE CONFIG & ELITE UI ---
 st.set_page_config(page_title="Pranpixl", page_icon="🔮", layout="wide")
 
 st.markdown("""
@@ -13,44 +13,37 @@ st.markdown("""
 
     .stApp { background: #080a0f; color: white; font-family: 'Inter', sans-serif; }
     
-    /* Header: Logo Left, Dropdown Right */
+    /* Header: Logo Left, Green Box Dropdown Right */
     .header-wrapper {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 20px 0;
+        padding: 10px 0;
     }
-    .logo-container {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-    .logo-text {
-        font-family: 'Syncopate', sans-serif;
-        font-size: 22px;
-        letter-spacing: 4px;
-        color: #ffffff;
-    }
+    .brand-group { display: flex; align-items: center; gap: 12px; }
+    .logo-img { width: 40px; height: 40px; border-radius: 8px; }
+    .brand-name { font-family: 'Syncopate', sans-serif; font-size: 20px; letter-spacing: 2px; }
 
-    /* Unique Language Dropdown in Green Box */
+    /* Custom Language Select in Green Box */
     div[data-baseweb="select"] {
-        border: 2px solid #00ffcc !important;
-        border-radius: 12px !important;
+        border: 1px solid #00ffcc !important;
+        border-radius: 8px !important;
         background-color: rgba(0, 255, 204, 0.05) !important;
-        min-width: 150px;
-    }
-    
-    /* Upload Box Section */
-    .upload-container {
-        border: 2px dashed rgba(255, 255, 255, 0.1);
-        border-radius: 25px;
-        padding: 60px;
-        text-align: center;
-        background: rgba(255, 255, 255, 0.02);
-        margin: 20px 0;
+        width: 120px !important;
     }
 
-    /* Result Section: 1/16th thumbnail */
+    /* Fixed Rectangular Upload Box (Matching your Screenshot) */
+    .stFileUploader {
+        max-width: 800px;
+        margin: 50px auto !important;
+        border: 2px dashed rgba(255, 255, 255, 0.1) !important;
+        border-radius: 30px !important;
+        padding: 80px 20px !important;
+        background: rgba(255, 255, 255, 0.02);
+    }
+    .stFileUploader section { padding: 0 !important; }
+    
+    /* Result Section: 1/16th Scale */
     .scan-header {
         display: flex;
         align-items: center;
@@ -58,43 +51,38 @@ st.markdown("""
         padding: 15px;
         border-radius: 20px;
         border-left: 5px solid #00ffcc;
-        margin-bottom: 30px;
-    }
-    .thumbnail-box {
-        width: 6.25%; /* Exactly 1/16th */
-        border-radius: 10px;
-        overflow: hidden;
-        margin-right: 20px;
+        margin: 30px auto;
+        max-width: 1200px;
     }
 
-    /* Horizontal Marketplace Scroll */
+    /* Horizontal Swipe Cards */
     .marketplace-row {
         display: flex;
         overflow-x: auto;
         gap: 25px;
-        padding-bottom: 20px;
+        padding: 30px 10px;
         scrollbar-width: none;
     }
     .marketplace-row::-webkit-scrollbar { display: none; }
 
     .product-card {
-        min-width: 350px;
+        min-width: 320px;
         background: rgba(255, 255, 255, 0.04);
-        border-radius: 30px;
-        padding: 30px;
+        border-radius: 28px;
+        padding: 25px;
         border: 1px solid rgba(255, 255, 255, 0.1);
         position: relative;
     }
 
-    /* Glossy Best Price Effect */
-    .glossy-highlight {
-        border: 2px solid #00ffcc !important;
-        background: linear-gradient(145deg, rgba(0,255,204,0.15) 0%, rgba(0,0,0,0) 100%);
-        box-shadow: 0 0 30px rgba(0, 255, 204, 0.2);
+    /* Glossy Best Deal Highlight */
+    .glossy-best {
+        border: 1px solid #00ffcc !important;
+        background: linear-gradient(145deg, rgba(0,255,204,0.1) 0%, rgba(0,0,0,0) 100%);
+        box-shadow: 0 0 25px rgba(0, 255, 204, 0.2);
     }
-    .best-deal-tag {
+    .deal-badge {
         position: absolute;
-        top: 20px;
+        top: -12px;
         right: 20px;
         background: #00ffcc;
         color: #000;
@@ -102,114 +90,112 @@ st.markdown("""
         font-weight: 900;
         padding: 5px 12px;
         border-radius: 50px;
-        box-shadow: 0 4px 10px rgba(0, 255, 204, 0.4);
+        z-index: 100;
     }
 
     /* Floating Feedback Button */
-    .floating-feedback {
+    .floating-query {
         position: fixed;
         bottom: 30px;
         right: 30px;
         background: #00ffcc;
         color: #000 !important;
-        padding: 18px 30px;
+        padding: 15px 30px;
         border-radius: 100px;
         font-weight: 800;
         text-decoration: none;
-        z-index: 1000;
         box-shadow: 0 10px 30px rgba(0, 255, 204, 0.3);
-        font-size: 14px;
-        transition: 0.3s;
+        z-index: 1000;
     }
-    .floating-feedback:hover { transform: scale(1.05); }
 
-    .price-val { font-size: 2.2rem; font-weight: 800; color: #fff; margin: 15px 0; }
-    .buy-button {
+    .price-val { font-size: 2rem; font-weight: 800; color: #fff; margin: 10px 0; }
+    .buy-btn {
         display: block; width: 100%; text-align: center; background: #fff;
-        color: #000 !important; padding: 14px; border-radius: 15px;
-        font-weight: bold; text-decoration: none; margin-top: 15px;
+        color: #000 !important; padding: 12px; border-radius: 10px;
+        font-weight: bold; text-decoration: none;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 2. DATA & AI ---
-LANGS = {"English": "Buy Now", "తెలుగు": "కొనండి", "Hindi": "अभी खरीदें"}
+# --- 2. LOGIC ---
+LANGS = {"English": "Buy Now", "తెలుగు": "కొనండి", "Hindi": "खरीदें"}
 
 @st.cache_resource
-def load_ai():
+def get_model():
     return tf.keras.applications.MobileNetV2(weights='imagenet')
 
-# --- 3. THE APP ---
 def main():
-    # HEADER: Name Left | Lang Dropdown Right
-    header_col1, header_col2 = st.columns([1, 1])
-    with header_col1:
-        st.markdown('<div class="logo-container"><span style="font-size:30px;">🔮</span><span class="logo-text">PRANPIXL</span></div>', unsafe_allow_html=True)
-    with header_col2:
-        # Styled inside the green box via CSS above
-        selected_lang = st.selectbox("", list(LANGS.keys()), label_visibility="collapsed")
-        buy_text = LANGS[selected_lang]
+    # HEADER: Brand Left | Green Box Select Right
+    h_left, h_right = st.columns([2, 1])
+    with h_left:
+        st.markdown("""
+            <div class="brand-group">
+                <img src="https://i.imgur.com/GscX6yN.png" class="logo-img">
+                <div class="brand-name">PRANPIXL</div>
+            </div>
+            <p style="opacity:0.4; font-size:10px; margin-left:55px;">ADVANCED VISUAL INTELLIGENCE</p>
+        """, unsafe_allow_html=True)
+    with h_right:
+        lang = st.selectbox("", list(LANGS.keys()), label_visibility="collapsed")
+        buy_txt = LANGS[lang]
 
-    # BODY: Upload Section
-    st.markdown('<div class="upload-container">', unsafe_allow_html=True)
+    # BODY: Single Centered Upload Box
     uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
+    
     if not uploaded_file:
-        st.markdown("<h2 style='opacity:0.6;'>Drop your photo here</h2>", unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown("<p style='text-align:center; opacity:0.3; font-size:14px;'>Drop your luxury item photo here to analyze</p>", unsafe_allow_html=True)
 
     if uploaded_file:
-        model = load_ai()
+        model = get_model()
         img = Image.open(uploaded_file)
         
-        with st.spinner("Decoding Pixels..."):
-            # AI Logic
-            img_input = img.convert('RGB').resize((224, 224))
-            arr = tf.keras.applications.mobilenet_v2.preprocess_input(np.array(img_input))
+        with st.spinner("Processing..."):
+            img_in = img.convert('RGB').resize((224, 224))
+            arr = tf.keras.applications.mobilenet_v2.preprocess_input(np.array(img_in))
             preds = model.predict(np.expand_dims(arr, axis=0))
             label = tf.keras.applications.mobilenet_v2.decode_predictions(preds, top=1)[0][0][1].replace('_', ' ').title()
 
         # RESULT HEADER: Image at 1/16th
         st.markdown('<div class="scan-header">', unsafe_allow_html=True)
-        col_img, col_info = st.columns([1, 15]) # 1:15 ratio = 1/16th
-        with col_img:
+        c_thumb, c_text = st.columns([1, 15]) 
+        with c_thumb:
             st.image(img, use_container_width=True)
-        with col_info:
-            st.markdown(f"<h1>{label}</h1><p style='color:#00ffcc; letter-spacing:1px;'>AUTHENTICATED SCAN COMPLETE</p>", unsafe_allow_html=True)
+        with c_text:
+            st.markdown(f"<h2 style='margin:0;'>{label}</h2><p style='color:#00ffcc; margin:0;'>IDENTITY VERIFIED</p>", unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
         # MARKETPLACE SCROLL
-        st.subheader("Marketplace Comparison")
-        platforms = [
-            {"name": "Amazon India", "price": 12999, "desc": "Official Brand Warranty, 7-day replacement policy.", "rev": "4.8/5 (2k+)"},
-            {"name": "Flipkart", "price": 11450, "desc": "Bank Offers available. Fast delivery in your city.", "rev": "4.5/5 (1.5k+)"},
-            {"name": "Myntra", "price": 13200, "desc": "Luxury Authenticity and Premium Packaging.", "rev": "4.9/5 (500+)"},
-            {"name": "Tata CLiQ", "price": 14000, "desc": "Exclusive Luxury Collection Partner.", "rev": "4.7/5 (800+)"}
+        st.markdown("<p style='margin-left:10px; opacity:0.5;'>SWIPE TO COMPARE DEALS</p>", unsafe_allow_html=True)
+        
+        deals = [
+            {"app": "Amazon", "price": 12499, "desc": "Official Store, Next-day delivery."},
+            {"app": "Flipkart", "price": 11800, "desc": "Bank Offer Available, Local Stock."},
+            {"app": "Myntra", "price": 13200, "desc": "Authenticity Certified, Premium Pack."}
         ]
         
-        min_p = min(p['price'] for p in platforms)
+        min_p = min(d['price'] for d in deals)
         
         html_row = '<div class="marketplace-row">'
-        for p in platforms:
-            is_best = p['price'] == min_p
-            best_css = "glossy-highlight" if is_best else ""
-            badge = '<div class="best-deal-tag">BEST VALUE</div>' if is_best else ""
+        for d in deals:
+            is_best = d['price'] == min_p
+            best_css = "glossy-best" if is_best else ""
+            badge = '<div class="deal-badge">BEST VALUE</div>' if is_best else ""
             
             html_row += f"""
             <div class="product-card {best_css}">
                 {badge}
-                <p style="color:#00ffcc; font-size:0.7rem; font-weight:800; letter-spacing:1px;">{p['name'].upper()}</p>
-                <h3 style="margin:10px 0;">{label}</h3>
-                <div class="price-val">₹{p['price']:,}</div>
-                <p style="font-size:0.85rem; color:#888; margin-bottom:15px;">{p['desc']}</p>
-                <p style="font-size:0.8rem; color:#f1c40f; margin-bottom:20px;">⭐ {p['rev']}</p>
-                <a href="#" class="buy-button">{buy_text}</a>
+                <p style="color:#00ffcc; font-size:0.7rem; font-weight:800; letter-spacing:1px;">{d['app'].upper()}</p>
+                <h4 style="margin:5px 0;">{label}</h4>
+                <div class="price-val">₹{d['price']:,}</div>
+                <p style="font-size:0.8rem; color:#888; margin-bottom:15px;">{d['desc']}</p>
+                <a href="#" class="buy-btn">{buy_txt}</a>
             </div>
             """
         html_row += "</div>"
         st.markdown(html_row, unsafe_allow_html=True)
 
-    # FLOATING ACTION BUTTON (Fixed Bottom Right)
-    st.markdown(f'<a href="mailto:feedback@pranpixl.com" class="floating-feedback">🚀 Feedback & Queries</a>', unsafe_allow_html=True)
+    # FLOATING ACTION BUTTON
+    st.markdown(f'<a href="mailto:queries@pranpixl.com" class="floating-query">🚀 Feedback & Queries</a>', unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
