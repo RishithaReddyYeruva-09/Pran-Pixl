@@ -69,53 +69,20 @@ translations = {
         "buy": "आता खरेदी करा",
         "best_deal": "सर्वोत्तम डील",
         "scan_status": "स्कॅन स्थिती"
-    },
-    "ગુજરાતી (Gujarati)": {
-        "instruction": "સ્કેન કરવા માટે છબી અહીં ખેંચો",
-        "ready": "છબી મળી છે",
-        "toggle_light": "☕ ડાર્ક રોસ્ટ",
-        "toggle_dark": "🥛 લાઈટ લેટ્ટે",
-        "watermark": "પ્રાણપિક્સેલ",
-        "buy": "હમણાં ખરીદો",
-        "best_deal": "શ્રેષ્ઠ સોદો",
-        "scan_status": "સ્કેન સ્થિતિ"
-    },
-    "ಕನ್ನಡ (Kannada)": {
-        "instruction": "ಸ್ಕ್ಯಾನ್ ಮಾಡಲು ಚಿತ್ರವನ್ನು ಇಲ್ಲಿಗೆ ಎಳೆಯಿರಿ",
-        "ready": "ಚಿತ್ರ ಸ್ವೀಕರಿಸಲಾಗಿದೆ",
-        "toggle_light": "☕ ಡಾರ್ಕ್ ರೋಸ್ಟ್",
-        "toggle_dark": "🥛 ಲೈಟ್ ಲ್ಯಾಟ್ಟೆ",
-        "watermark": "ಪ್ರಾಣ್‌ಪಿಕ್ಸೆಲ್",
-        "buy": "ಈಗ ಖರೀದಿಸಿ",
-        "best_deal": "ಅತ್ಯುತ್ತಮ ಡೀಲ್",
-        "scan_status": "ಸ್ಕ್ಯಾನ್ ಸ್ಥಿತಿ"
-    },
-    "മലയാളം (Malayalam)": {
-        "instruction": "സ്കാൻ ചെയ്യാൻ ചിത്രം ഇവിടെ ഇടുക",
-        "ready": "ചിത്രം ലഭിച്ചു",
-        "toggle_light": "☕ ഡാർക്ക് റോസ്റ്റ്",
-        "toggle_dark": "🥛 ലൈറ്റ് ലാറ്റെ",
-        "watermark": "പ്രാൺപിക്സൽ",
-        "buy": "ഇപ്പോൾ വാങ്ങുക",
-        "best_deal": "മികച്ച ഡീൽ",
-        "scan_status": "സ്കാൻ നില"
     }
 }
 
-# 3. MOCK API LOGIC (Simulates Data Fetching)
+# 3. MOCK API LOGIC
 def get_live_market_data(item_name):
     platforms = ["Amazon", "Flipkart", "Myntra", "Ajio"]
     data = {}
     base_price = random.randint(1500, 5000)
-    
-    # Platform-specific "simulated" descriptions
     descriptions = {
-        "Amazon": f"Bestselling {item_name} with high-grade finish. Reliable performance and top-tier seller rating.",
-        "Flipkart": f"Exclusive {item_name} deal. Features advanced comfort technology and stylish design elements.",
-        "Myntra": f"Premium fashion-forward {item_name}. Handpicked quality materials for a luxury feel.",
-        "Ajio": f"Artisanal {item_name} with a focus on trendy aesthetics and traditional craftsmanship."
+        "Amazon": f"Bestselling {item_name} with high-grade finish. Reliable performance and top-tier rating.",
+        "Flipkart": f"Exclusive {item_name} deal. Features advanced comfort tech and stylish design.",
+        "Myntra": f"Premium fashion-forward {item_name}. Handpicked materials for a luxury feel.",
+        "Ajio": f"Artisanal {item_name} focusing on trendy aesthetics and craftsmanship."
     }
-
     for p in platforms:
         price = base_price + random.randint(-250, 400)
         data[p] = {
@@ -128,7 +95,7 @@ def get_live_market_data(item_name):
         }
     return data
 
-# 4. Theme & Custom CSS
+# 4. Custom CSS
 if st.session_state.theme == 'light':
     bg_color, text_color, box_bg, border_color = "#D7CCC8", "#3E2723", "rgba(255, 255, 255, 0.5)", "#3E2723"
     watermark_opacity = "0.15"
@@ -147,6 +114,7 @@ st.markdown(f"""
         border-radius: 35px; padding: 25px; text-align: center;
         min-height: 520px; backdrop-filter: blur(8px);
         display: flex; flex-direction: column; justify-content: space-between;
+        margin-bottom: 20px;
     }}
     .price-tag {{ font-size: 2.1rem; font-weight: 800; color: {text_color}; margin: 5px 0; }}
     .best-badge {{ 
@@ -156,12 +124,12 @@ st.markdown(f"""
     .product-desc {{
         font-size: 0.85rem; color: {text_color}; opacity: 0.8;
         text-align: left; margin: 15px 0; line-height: 1.4;
-        min-height: 65px; border-left: 3px solid {border_color}; padding-left: 10px;
+        min-height: 70px; border-left: 3px solid {border_color}; padding-left: 10px;
     }}
     </style>
     """, unsafe_allow_html=True)
 
-# 5. Header Section
+# 5. Header
 h_col1, h_col2 = st.columns([2, 1.2])
 with h_col1:
     st.markdown(f'<h1 style="color:{text_color}; padding-left: 20px; font-weight:900;">PranPixl</h1>', unsafe_allow_html=True)
@@ -175,26 +143,24 @@ with h_col2:
 
 st.markdown(f'<div class="watermark-container"><div class="watermark-text">{ui["watermark"]}</div></div>', unsafe_allow_html=True)
 
-# 6. Main Workspace
+# 6. Content Workspace
 uploaded_file = st.file_uploader("", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
 
 if not uploaded_file:
     st.markdown(f"<h3 style='text-align: center; color: {text_color}; margin-top: 15vh;'>{ui['instruction']}</h3>", unsafe_allow_html=True)
 else:
     with st.spinner('Deep Scanning Object...'):
-        time.sleep(1.5)
-        item_name = "Premium Sneakers" # Simulated AI Tagging
+        time.sleep(1.0)
+        item_name = "Premium Sneakers"
         market_data = get_live_market_data(item_name)
         cheapest_platform = min(market_data, key=lambda x: market_data[x]['numeric_price'])
 
-    # Scanned Item Preview
     r_col1, r_col2 = st.columns([1, 2])
     with r_col1:
         st.image(uploaded_file, width=280)
     with r_col2:
         st.markdown(f"<h2 style='color: {text_color}; margin-bottom:0;'>{item_name}</h2>", unsafe_allow_html=True)
         st.markdown(f"<p style='color: {text_color}; opacity:0.7;'>{ui['scan_status']}: <span style='color:#2E7D32; font-weight:bold;'>{ui['ready']}</span></p>", unsafe_allow_html=True)
-        st.success("Matching found across 4 major Indian marketplaces.")
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -211,20 +177,19 @@ else:
         name = app['name']
         details = market_data[name]
         with cols[i]:
-            badge = f'<div class="best-badge">🏆 {ui["best_deal"]}</div>' if name == cheapest_platform else '<div style="height:42px;"></div>'
+            badge_html = f'<div class="best-badge">🏆 {ui["best_deal"]}</div>' if name == cheapest_platform else '<div style="height:42px;"></div>'
             
+            # THE CORRECTED RENDERING BLOCK
             st.markdown(f"""
                 <div class="result-card">
                     <div>
-                        {badge}
+                        {badge_html}
                         <h2 style="color: {text_color}; margin:0;">{name}</h2>
                         <p style="font-size:0.7rem; color:{text_color}; opacity:0.6; margin-bottom:10px;">{app['sub']}</p>
                         <div class="price-tag">{details['price']}</div>
                         <div style="color:#FBC02D; font-weight:bold;">★ {details['rating']} <span style="font-size:0.8rem; color:{text_color}; opacity:0.5;">({details['reviews']})</span></div>
-                        
                         <div class="product-desc">{details['desc']}</div>
                     </div>
-                    
                     <div style="text-align: left; font-size: 0.9rem; color: {text_color};">
                         <hr style="border: 0.5px solid {border_color}; opacity: 0.2;">
                         <b>📦 {details['delivery']} Delivery</b><br>
@@ -234,8 +199,6 @@ else:
                 </div>
             """, unsafe_allow_html=True)
             
-            # Action Button
+            # Button outside the HTML string
             if st.button(f"{ui['buy']}", key=f"btn_{name}", use_container_width=True):
                 st.toast(f"Opening {name} Store...")
-
-st.markdown("""<div style="position: fixed; bottom: 20px; right: 20px; width: 45px; height: 45px; background: white; border: 2.5px solid black; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.7rem; cursor: pointer;">HELP</div>""", unsafe_allow_html=True)
