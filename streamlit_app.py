@@ -1,12 +1,12 @@
 import streamlit as st
 
-# Step 1: Force the page to wide mode to support the 1/3 - 2/3 split
-st.set_page_config(layout="wide", page_title="Vintage App")
+# Step 1: Force wide mode
+st.set_page_config(layout="wide", page_title="Vintage App", page_icon="📜")
 
-# Step 2: Define the interface in a single Python string
-interface_html = """
+# Step 2: Define CSS and HTML Structure
+# We'll use Python string formatting to inject dynamic data later
+interface_css = """
 <style>
-    /* THEME VARIABLES */
     :root {
         --espresso: #3d2b1f;
         --mocha: #6f4e37;
@@ -16,11 +16,10 @@ interface_html = """
         --border: #a67c52;
     }
 
-    /* CLEAN SLATE: Hide Streamlit's default margins and UI */
-    .stApp { padding: 0; }
-    header { visibility: hidden; }
-    footer { visibility: hidden; }
-    #root > div:nth-child(1) > div > div > div > div > section > div { padding: 0; }
+    /* Hide Streamlit UI elements */
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
+    [data-testid="stHeader"] {background: rgba(0,0,0,0);}
 
     .app-wrapper {
         display: flex;
@@ -32,7 +31,6 @@ interface_html = """
         font-family: 'Georgia', serif;
     }
 
-    /* LEFT PART: 1/3 WIDTH */
     .sidebar {
         flex: 1; 
         background-color: var(--espresso);
@@ -40,10 +38,8 @@ interface_html = """
         border-right: 5px double var(--border);
         padding: 40px 30px;
         overflow-y: auto;
-        box-shadow: 5px 0 15px rgba(0,0,0,0.2);
     }
 
-    /* RIGHT PART: 2/3 WIDTH */
     .main-section {
         flex: 2; 
         background-color: var(--paper);
@@ -53,45 +49,64 @@ interface_html = """
         background-image: radial-gradient(var(--paper) 70%, #e3d5c5 100%);
     }
 
-    h1, h2 {
-        text-transform: uppercase;
-        letter-spacing: 2px;
+    .vintage-card {
+        background: rgba(255, 255, 255, 0.3);
+        border: 1px solid var(--border);
+        padding: 20px;
+        margin-top: 20px;
+        border-radius: 2px;
+        box-shadow: 3px 3px 0px var(--mocha);
     }
 
-    h2 {
-        border-bottom: 2px solid var(--latte);
-        padding-bottom: 10px;
-        color: var(--latte);
-        font-size: 1.5rem;
-    }
-
-    h1 {
-        border-bottom: 2px solid var(--mocha);
-        padding-bottom: 15px;
-        margin-top: 0;
-    }
-
-    p {
-        line-height: 1.8;
-        font-style: italic;
-        font-size: 1.1rem;
-    }
+    h1 { border-bottom: 2px solid var(--mocha); padding-bottom: 15px; }
+    h2 { border-bottom: 2px solid var(--latte); color: var(--latte); }
 </style>
+"""
 
+# Step 3: Streamlit Logic (The "Brain")
+# Since we are using a fixed CSS layout, we use the sidebar for controls 
+# and the main area for the "Gallery" output.
+
+with st.sidebar:
+    st.markdown("### 🖋️ Ledger Entry")
+    user_name = st.text_input("Correspondent Name", "Arthur Morgan")
+    ink_color = st.selectbox("Select Ink", ["Sepia", "Charcoal", "Oxblood"])
+    
+    st.markdown("---")
+    stamp_button = st.button("Apply Official Stamp")
+
+# Step 4: Render the Layout
+# We inject the CSS first
+st.markdown(interface_css, unsafe_allow_html=True)
+
+# We create the HTML structure but leave "slots" for our Streamlit data
+if stamp_button:
+    status_msg = f"Document notarized for {user_name} in {ink_color} ink."
+else:
+    status_msg = "Awaiting correspondence..."
+
+main_content = f"""
 <div class="app-wrapper">
     <div class="sidebar">
         <h2>The Blend</h2>
-        <p>This is your control panel.</p>
-        <p>Everything here is contained within the first third of your screen.</p>
+        <p>Use the Streamlit sidebar on the left to input data.</p>
+        <div style="margin-top: 50px; opacity: 0.7;">
+            <small>ESTABLISHED 1892</small>
+        </div>
     </div>
-
     <div class="main-section">
         <h1>Vintage Workspace</h1>
-        <p>Welcome to the main gallery. The layout is now correctly partitioned, and the "SyntaxError" is resolved.</p>
-        <p>We are using a single-file monolithic structure as requested.</p>
+        <p>Welcome, <b>{user_name}</b>.</p>
+        <div class="vintage-card">
+            <h3>Status Report</h3>
+            <p>{status_msg}</p>
+        </div>
+        <p style="margin-top:30px;">
+            The layout remains partitioned 1/3 to 2/3. By using Python f-strings, 
+            we can inject Streamlit variables directly into your custom HTML.
+        </p>
     </div>
 </div>
 """
 
-# Step 3: Execute the HTML/CSS
-st.markdown(interface_html, unsafe_allow_html=True)
+st.markdown(main_content, unsafe_allow_html=True)
