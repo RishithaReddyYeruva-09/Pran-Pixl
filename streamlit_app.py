@@ -3,8 +3,7 @@ import streamlit as st
 # Step 1: Force wide mode
 st.set_page_config(layout="wide", page_title="Vintage App", page_icon="📜")
 
-# Step 2: Define CSS and HTML Structure
-# We'll use Python string formatting to inject dynamic data later
+# Step 2: Define CSS with Header Logic
 interface_css = """
 <style>
     :root {
@@ -16,19 +15,58 @@ interface_css = """
         --border: #a67c52;
     }
 
-    /* Hide Streamlit UI elements */
-    header {visibility: hidden;}
-    footer {visibility: hidden;}
-    [data-testid="stHeader"] {background: rgba(0,0,0,0);}
+    /* Hide Streamlit default UI */
+    header { visibility: hidden; }
+    footer { visibility: hidden; }
 
+    /* Main Container */
     .app-wrapper {
         display: flex;
+        flex-direction: column; /* Stack header on top */
         height: 100vh;
         width: 100vw;
         position: fixed;
         top: 0;
         left: 0;
         font-family: 'Georgia', serif;
+    }
+
+    /* TOP NAVIGATION BAR */
+    .top-nav {
+        display: flex;
+        justify-content: space-between; /* Pushes logo left, language right */
+        align-items: center;
+        padding: 15px 40px;
+        background-color: var(--cream);
+        border-bottom: 3px double var(--border);
+        z-index: 1000;
+    }
+
+    .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+        background-color: var(--espresso);
+        border-radius: 8px; /* Matching the rounded-square look in your image */
+    }
+
+    .app-name {
+        font-weight: bold;
+        font-size: 1.4rem;
+        color: var(--espresso);
+        letter-spacing: 1px;
+    }
+
+    /* CONTENT SPLIT (1/3 - 2/3) */
+    .content-body {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
     }
 
     .sidebar {
@@ -46,67 +84,54 @@ interface_css = """
         color: var(--espresso);
         padding: 60px;
         overflow-y: auto;
-        background-image: radial-gradient(var(--paper) 70%, #e3d5c5 100%);
     }
 
-    .vintage-card {
-        background: rgba(255, 255, 255, 0.3);
-        border: 1px solid var(--border);
-        padding: 20px;
-        margin-top: 20px;
-        border-radius: 2px;
-        box-shadow: 3px 3px 0px var(--mocha);
+    /* Streamlit Selectbox override to match vintage style */
+    div[data-baseweb="select"] {
+        border: 1px solid var(--border) !important;
+        background-color: var(--paper) !important;
     }
-
-    h1 { border-bottom: 2px solid var(--mocha); padding-bottom: 15px; }
-    h2 { border-bottom: 2px solid var(--latte); color: var(--latte); }
 </style>
 """
 
-# Step 3: Streamlit Logic (The "Brain")
-# Since we are using a fixed CSS layout, we use the sidebar for controls 
-# and the main area for the "Gallery" output.
-
+# Step 3: Streamlit Interaction for the Language Dropdown
 with st.sidebar:
-    st.markdown("### 🖋️ Ledger Entry")
-    user_name = st.text_input("Correspondent Name", "Arthur Morgan")
-    ink_color = st.selectbox("Select Ink", ["Sepia", "Charcoal", "Oxblood"])
-    
-    st.markdown("---")
-    stamp_button = st.button("Apply Official Stamp")
+    # We place the logic in the sidebar for Streamlit to track, 
+    # but we will visually position it in the top right using columns.
+    st.markdown("### ⚙️ Settings")
+    lang = st.selectbox("Current Language", ["English", "Hindi", "French", "Spanish"])
 
-# Step 4: Render the Layout
-# We inject the CSS first
+# Step 4: Render HTML
 st.markdown(interface_css, unsafe_allow_html=True)
 
-# We create the HTML structure but leave "slots" for our Streamlit data
-if stamp_button:
-    status_msg = f"Document notarized for {user_name} in {ink_color} ink."
-else:
-    status_msg = "Awaiting correspondence..."
-
-main_content = f"""
+# Constructing the HTML with the Logo Left and Language info Right
+# Note: The dropdown is handled by Streamlit, so we "mimic" its position in the header
+header_html = f"""
 <div class="app-wrapper">
-    <div class="sidebar">
-        <h2>The Blend</h2>
-        <p>Use the Streamlit sidebar on the left to input data.</p>
-        <div style="margin-top: 50px; opacity: 0.7;">
-            <small>ESTABLISHED 1892</small>
+    <div class="top-nav">
+        <div class="logo-section">
+            <div class="logo-icon"></div>
+            <div class="app-name">PRANPIXL <span style="font-size: 0.8rem; font-weight: normal; opacity: 0.7;">ADVANCED VISUAL INTELLIGENCE</span></div>
+        </div>
+        <div class="language-display">
+            <span style="border: 1px solid var(--border); padding: 5px 15px; border-radius: 5px; font-size: 0.9rem;">
+                🌐 {lang}
+            </span>
         </div>
     </div>
-    <div class="main-section">
-        <h1>Vintage Workspace</h1>
-        <p>Welcome, <b>{user_name}</b>.</p>
-        <div class="vintage-card">
-            <h3>Status Report</h3>
-            <p>{status_msg}</p>
+    
+    <div class="content-body">
+        <div class="sidebar">
+            <h2>The Blend</h2>
+            <p>Select your language in the ledger to the left to update the header.</p>
         </div>
-        <p style="margin-top:30px;">
-            The layout remains partitioned 1/3 to 2/3. By using Python f-strings, 
-            we can inject Streamlit variables directly into your custom HTML.
-        </p>
+
+        <div class="main-section">
+            <h1>Vintage Workspace</h1>
+            <p>The top navigation bar now mimics your uploaded layout with the brand on the left and selected language on the right.</p>
+        </div>
     </div>
 </div>
 """
 
-st.markdown(main_content, unsafe_allow_html=True)
+st.markdown(header_html, unsafe_allow_html=True)
