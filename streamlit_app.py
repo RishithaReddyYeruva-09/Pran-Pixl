@@ -3,10 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App Workspace</title>
+    <title>Vintage Coffee App</title>
     
     <style>
-        /* Reset and Base Styles */
+        /* Vintage Color Palette */
+        :root {
+            --espresso: #3d2b1f;
+            --mocha: #6f4e37;
+            --latte: #c0a080;
+            --cream: #f5f5dc;
+            --paper: #ece0d1;
+            --border: #a67c52;
+        }
+
         * {
             box-sizing: border-box;
         }
@@ -15,8 +24,10 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            font-family: sans-serif;
-            overflow: hidden; /* Prevents double scrollbars */
+            /* Using a Serif font for that vintage feel */
+            font-family: 'Georgia', serif;
+            background-color: var(--paper);
+            color: var(--espresso);
         }
 
         /* The 2-Part Layout Container */
@@ -29,18 +40,38 @@
         /* Sidebar: 1 part (1/3) */
         .sidebar {
             flex: 1; 
-            background-color: #f4f4f4;
-            border-right: 1px solid #ccc;
-            padding: 20px;
+            background-color: var(--espresso);
+            color: var(--cream);
+            border-right: 4px double var(--border);
+            padding: 30px;
             overflow-y: auto;
         }
 
         /* Main Content: 2 parts (2/3) */
         .main-section {
             flex: 2;
-            background-color: #ffffff;
-            padding: 20px;
+            background-color: var(--paper);
+            padding: 40px;
             overflow-y: auto;
+            /* Subtle parchment texture effect */
+            background-image: radial-gradient(var(--paper) 70%, #e3d5c5 100%);
+        }
+
+        h2 {
+            border-bottom: 2px solid var(--mocha);
+            padding-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar h2 {
+            border-bottom-color: var(--latte);
+            color: var(--latte);
+        }
+
+        p {
+            line-height: 1.6;
+            font-style: italic;
         }
     </style>
 </head>
@@ -48,18 +79,18 @@
 
     <div class="container">
         <aside class="sidebar">
-            <h2>Sidebar (1/3)</h2>
-            <p>Controls or navigation go here.</p>
+            <h2>The Blend</h2>
+            <p>Navigation and filters would sit here, wrapped in the warmth of a dark roast.</p>
         </aside>
 
         <main class="main-section">
-            <h2>Main Content (2/3)</h2>
-            <p>Your primary app data goes here.</p>
+            <h2>Main Gallery</h2>
+            <p>Your content area now has a parchment-style finish. It's clean, readable, and distinctly vintage.</p>
         </main>
     </div>
 
     <script>
-        console.log("Senior Dev: 1/3 split layout active.");
+        console.log("Senior Dev: Vintage Coffee theme applied.");
     </script>
 </body>
 </html>
