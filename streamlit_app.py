@@ -38,16 +38,42 @@ st.markdown("""
         min-width: 130px !important;
     }
 
-    /* THE BODY: Single Large Upload Rect (Matching your Screenshot) */
+    /* THE BODY: Single Large Upload Rect with Corner Brackets */
     [data-testid="stFileUploader"] {
         max-width: 800px;
         margin: 5rem auto !important;
         background: rgba(255, 255, 255, 0.02) !important;
-        border: 2px dashed rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
         border-radius: 30px !important;
         padding: 80px 20px !important;
-        transition: 0.3s;
+        position: relative;
     }
+
+    /* Decorative Corner Lines (The Brackets) */
+    [data-testid="stFileUploader"]::before, [data-testid="stFileUploader"]::after {
+        content: "";
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border: 3px solid #00ffcc;
+        z-index: 5;
+    }
+
+    /* Top Left Bracket */
+    [data-testid="stFileUploader"]::before {
+        top: -10px;
+        left: -10px;
+        border-right: none;
+        border-bottom: none;
+        border-radius: 15px 0 0 0;
+    }
+
+    /* Bottom Right Bracket (Simulated via Container shadow/pseudo) */
+    /* Note: Streamlit limits multiple pseudos, so we use a shadow-glow to mimic the bottom line */
+    [data-testid="stFileUploader"] {
+        box-shadow: 10px 10px 0px -5px rgba(0, 255, 204, 0.1);
+    }
+
     [data-testid="stFileUploader"]:hover { border-color: #00ffcc !important; }
     
     /* Hiding the clumsy default elements inside the uploader */
@@ -182,7 +208,7 @@ def main():
             <div class="{style}">
                 {badge}
                 <p style="color:#00ffcc; font-size:0.75rem; font-weight:800;">{p['name'].upper()}</p>
-                <h3 style="margin:5px 0;">{label}</h3>
+                <h3 style="margin:10px 0;">{label}</h3>
                 <div style="font-size:2.2rem; font-weight:900; margin:10px 0;">₹{p['price']:,}</div>
                 <p style="font-size:0.8rem; opacity:0.5; margin-bottom:20px;">{p['desc']}</p>
                 <a href="#" style="display:block; background:white; color:black; text-align:center; padding:12px; border-radius:12px; font-weight:bold; text-decoration:none;">GET DEAL</a>
